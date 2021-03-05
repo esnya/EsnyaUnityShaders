@@ -14,7 +14,7 @@ A special mesh is required. meshes for 10, 20, 30, 40, 50, and 100 fish are incl
 |:--|:--|:--|
 | | Mask Clip Value | Threshold of alpha clipping. |
 | PBR Material | | Basic PBR material parameters. |
-| Tiling | | 複数種の魚タイル状に並べるテクスチャを使う設定 |
+| Tiling | | |
 | | Raws, Cols |  |
 | | Tile Count | Number of uset tiles. |
 | | Random Seed | |
