@@ -17,6 +17,13 @@ Occludes everything behind.
 ## Misc/Meta
 A metapass-only shader to provide static lighting.
 
+## Osakana Shader
+
+GPU particles of migrating small fish such as in an aquarium. See also [OsakanaShader/README.md](Assets/OsakanaShader/README.md).
+
+![OsakanaShader](Documents~/img02.png)
+
+---
 ---
 
 # Japanese
@@ -34,3 +41,9 @@ Autodesk Interactiveに似たPBRシェーダー。おかしなRoughnessを補正
 
 ## Misc/Meta
 Static Lightingにのみ反映されるメタパスだけのシェーダー。
+
+## OsakanaShader
+
+回遊する小魚のGPUパーティクル。詳細は[OsakanaShader/README.md](Assets/OsakanaShader/README.md#Japanese)。
+
+![OsakanaShader](Documents~/img02.png)
