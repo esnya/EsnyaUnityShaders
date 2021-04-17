@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -28,13 +28,13 @@ namespace EsnyaFactory {
 
     public class VisibleIfDrawer : MaterialPropertyDrawer
     {
-        string keyword;
+        protected string keyword;
         public VisibleIfDrawer(string keyword)
         {
             this.keyword = keyword;
         }
 
-        bool IsVisible(MaterialEditor editor)
+        protected virtual bool IsVisible(MaterialEditor editor)
         {
             return !editor.targets.Select(m => m as Material).Any(m => m.shaderKeywords == null || !m.shaderKeywords.Contains(keyword));
         }
@@ -49,6 +49,16 @@ namespace EsnyaFactory {
         public override float GetPropertyHeight(MaterialProperty prop, string label, MaterialEditor editor)
         {
             return IsVisible(editor) ? MaterialEditor.GetDefaultPropertyHeight(prop) : 0;
+        }
+    }
+
+    public class HideIfDrawer : VisibleIfDrawer
+    {
+        public HideIfDrawer(string keyword) : base(keyword) {}
+
+        protected override bool IsVisible(MaterialEditor editor)
+        {
+            return !base.IsVisible(editor);
         }
     }
 }

@@ -41,8 +41,8 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 8b387cfdb45af324c972a5225c18ba6d, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Scale: {x: 1, y: 0.5}
+        m_Offset: {x: 0, y: 0.25}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -100,7 +100,7 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
-    - _FishScalePerAxis: {r: 1, g: 1, b: 1, a: 0}
+    - _FishScalePerAxis: {r: 1, g: 0.5, b: 1, a: 0}
     - _PositionNoiseScale: {r: 1, g: 1, b: 1, a: 0}
     - _TileOffset: {r: 0, g: 0, b: 0, a: 0}
     - _TileScale: {r: 1, g: 1, b: 0, a: 0}
