@@ -15,6 +15,7 @@ Shader "Esnya PBR/Opaque"
 		[Header(Normal)][Toggle(_NORMALMAP)] _NORMALMAP("Use Normal Map", Float) = 0
 		[NoScaleOffset][Normal][EsnyaFactory.VisibleIf(_NORMALMAP)]_BumpMap("Normal Map", 2D) = "bump" {}
 		[VisibleIf(_NORMALMAP)]_BumpScale("Normal Scale", Float) = 1
+		[VisibleIf(_NORMALMAP)][Toggle(_NEAGTENORMALG_ON)] _NeagteNormalG("Neagte Normal G", Float) = 0
 		[Header(Emission)][Toggle(_EMISSION)] _EMISSION("Use Emission", Float) = 0
 		[HDR][NoScaleOffset][VisibleIf(_EMISSION)]_EmissionMap("EmissionMap", 2D) = "white" {}
 		[HDR][VisibleIf(_EMISSION)]_EmissionColor("Emission Color", Color) = (0,0,0,0)
@@ -44,6 +45,7 @@ Shader "Esnya PBR/Opaque"
 		#include "UnityStandardUtils.cginc"
 		#pragma target 3.0
 		#pragma shader_feature _ZSHIFT_ON
+		#pragma shader_feature _NEAGTENORMALG_ON
 		#pragma shader_feature _DETAIL_MULX2
 		#pragma shader_feature _NORMALMAP
 		#pragma shader_feature _PARALLAXMAP
@@ -128,66 +130,71 @@ Shader "Esnya PBR/Opaque"
 			UNITY_INITIALIZE_OUTPUT( Input, o );
 			float3 ase_worldPos = mul( unity_ObjectToWorld, v.vertex );
 			float3 ase_worldViewDir = normalize( UnityWorldSpaceViewDir( ase_worldPos ) );
-			float3 worldToObjDir105_g13 = mul( unity_WorldToObject, float4( ase_worldViewDir, 0 ) ).xyz;
-			float3 objToWorld110_g13 = mul( unity_ObjectToWorld, float4( float3( 0,0,0 ), 1 ) ).xyz;
-			float2 appendResult109_g13 = (float2(( objToWorld110_g13.x + objToWorld110_g13.y ) , ( objToWorld110_g13.y + objToWorld110_g13.z )));
-			float simpleNoise106_g13 = SimpleNoise( appendResult109_g13*1000.0 );
-			simpleNoise106_g13 = simpleNoise106_g13*2 - 1;
+			float3 worldToObjDir105_g1 = mul( unity_WorldToObject, float4( ase_worldViewDir, 0 ) ).xyz;
+			float3 objToWorld110_g1 = mul( unity_ObjectToWorld, float4( float3( 0,0,0 ), 1 ) ).xyz;
+			float2 appendResult109_g1 = (float2(( objToWorld110_g1.x + objToWorld110_g1.y ) , ( objToWorld110_g1.y + objToWorld110_g1.z )));
+			float simpleNoise106_g1 = SimpleNoise( appendResult109_g1*1000.0 );
+			simpleNoise106_g1 = simpleNoise106_g1*2 - 1;
 			#ifdef _ZSHIFT_ON
-				float3 staticSwitch112_g13 = ( worldToObjDir105_g13 * simpleNoise106_g13 * _ZShiftScale );
+				float3 staticSwitch112_g1 = ( worldToObjDir105_g1 * simpleNoise106_g1 * _ZShiftScale );
 			#else
-				float3 staticSwitch112_g13 = float3(0,0,0);
+				float3 staticSwitch112_g1 = float3(0,0,0);
 			#endif
-			v.vertex.xyz += staticSwitch112_g13;
+			v.vertex.xyz += staticSwitch112_g1;
 			v.vertex.w = 1;
 		}
 
 		void surf( Input i , inout SurfaceOutputStandard o )
 		{
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			float2 uv_ParallaxMap119_g13 = i.uv_texcoord;
+			float2 uv_ParallaxMap119_g1 = i.uv_texcoord;
 			float3 ase_worldPos = i.worldPos;
 			float3 ase_worldViewDir = normalize( UnityWorldSpaceViewDir( ase_worldPos ) );
-			float2 Offset118_g13 = ( ( tex2D( _ParallaxMap, uv_ParallaxMap119_g13 ).r - 1 ) * ase_worldViewDir.xy * _Parallax ) + uv_MainTex;
+			float2 Offset118_g1 = ( ( tex2D( _ParallaxMap, uv_ParallaxMap119_g1 ).r - 1 ) * ase_worldViewDir.xy * _Parallax ) + uv_MainTex;
 			#ifdef _PARALLAXMAP
-				float2 staticSwitch127_g13 = Offset118_g13;
+				float2 staticSwitch127_g1 = Offset118_g1;
 			#else
-				float2 staticSwitch127_g13 = uv_MainTex;
+				float2 staticSwitch127_g1 = uv_MainTex;
 			#endif
 			#ifdef _NORMALMAP
-				float3 staticSwitch143_g13 = UnpackScaleNormal( tex2D( _BumpMap, staticSwitch127_g13 ), _BumpScale );
+				float3 staticSwitch143_g1 = UnpackScaleNormal( tex2D( _BumpMap, staticSwitch127_g1 ), _BumpScale );
 			#else
-				float3 staticSwitch143_g13 = float3(0,0,1);
+				float3 staticSwitch143_g1 = float3(0,0,1);
 			#endif
 			float2 uv2_MainTex = i.uv2_texcoord2 * _MainTex_ST.xy + _MainTex_ST.zw;
-			float2 lerpResult162_g13 = lerp( uv_MainTex , uv2_MainTex , (float)_UVSetforsecondarytextures);
-			float2 uv_DetailMask152_g13 = i.uv_texcoord;
-			float3 lerpResult156_g13 = lerp( BlendNormals( UnpackScaleNormal( tex2D( _DetailNormalMap, lerpResult162_g13 ), _DetailNormalMapScale ) , staticSwitch143_g13 ) , staticSwitch143_g13 , tex2D( _DetailMask, uv_DetailMask152_g13 ).r);
+			float2 lerpResult162_g1 = lerp( uv_MainTex , uv2_MainTex , (float)_UVSetforsecondarytextures);
+			float2 uv_DetailMask152_g1 = i.uv_texcoord;
+			float3 lerpResult156_g1 = lerp( BlendNormals( UnpackScaleNormal( tex2D( _DetailNormalMap, lerpResult162_g1 ), _DetailNormalMapScale ) , staticSwitch143_g1 ) , staticSwitch143_g1 , tex2D( _DetailMask, uv_DetailMask152_g1 ).r);
 			#ifdef _DETAIL_MULX2
-				float3 staticSwitch138_g13 = lerpResult156_g13;
+				float3 staticSwitch138_g1 = lerpResult156_g1;
 			#else
-				float3 staticSwitch138_g13 = staticSwitch143_g13;
+				float3 staticSwitch138_g1 = staticSwitch143_g1;
 			#endif
-			o.Normal = staticSwitch138_g13;
-			float4 temp_output_8_0_g13 = ( _Color * tex2D( _MainTex, staticSwitch127_g13 ) );
-			float3 temp_output_78_0_g13 = (temp_output_8_0_g13).rgb;
+			#ifdef _NEAGTENORMALG_ON
+				float3 staticSwitch181_g1 = ( staticSwitch138_g1 * float3(1,-1,1) );
+			#else
+				float3 staticSwitch181_g1 = staticSwitch138_g1;
+			#endif
+			o.Normal = staticSwitch181_g1;
+			float4 temp_output_8_0_g1 = ( _Color * tex2D( _MainTex, staticSwitch127_g1 ) );
+			float3 temp_output_78_0_g1 = (temp_output_8_0_g1).rgb;
 			float2 uv_DetailAlbedoMap = i.uv_texcoord * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
-			float3 lerpResult157_g13 = lerp( (tex2D( _DetailAlbedoMap, uv_DetailAlbedoMap )).rgb , temp_output_78_0_g13 , tex2D( _DetailMask, uv_DetailMask152_g13 ).r);
+			float3 lerpResult157_g1 = lerp( (tex2D( _DetailAlbedoMap, uv_DetailAlbedoMap )).rgb , temp_output_78_0_g1 , tex2D( _DetailMask, uv_DetailMask152_g1 ).r);
 			#ifdef _DETAIL_MULX2
-				float3 staticSwitch131_g13 = lerpResult157_g13;
+				float3 staticSwitch131_g1 = lerpResult157_g1;
 			#else
-				float3 staticSwitch131_g13 = temp_output_78_0_g13;
+				float3 staticSwitch131_g1 = temp_output_78_0_g1;
 			#endif
-			o.Albedo = staticSwitch131_g13;
+			o.Albedo = staticSwitch131_g1;
 			#ifdef _EMISSION
-				float3 staticSwitch129_g13 = ( (tex2D( _EmissionMap, staticSwitch127_g13 )).rgb * (_EmissionColor).rgb );
+				float3 staticSwitch129_g1 = ( (tex2D( _EmissionMap, staticSwitch127_g1 )).rgb * (_EmissionColor).rgb );
 			#else
-				float3 staticSwitch129_g13 = float3( 0,0,0 );
+				float3 staticSwitch129_g1 = float3( 0,0,0 );
 			#endif
-			o.Emission = staticSwitch129_g13;
-			o.Metallic = ( tex2D( _MetallicGlossMap, staticSwitch127_g13 ).r * _Metallic );
-			o.Smoothness = ( 1.0 - pow( ( tex2D( _SpecGlossMap, staticSwitch127_g13 ).r * _Glossiness ) , _RoughnessCorrection ) );
-			o.Occlusion = ( tex2D( _OcclusionMap, staticSwitch127_g13 ).r * _OcclusionStrength );
+			o.Emission = staticSwitch129_g1;
+			o.Metallic = ( tex2D( _MetallicGlossMap, staticSwitch127_g1 ).r * _Metallic );
+			o.Smoothness = ( 1.0 - pow( ( tex2D( _SpecGlossMap, staticSwitch127_g1 ).r * _Glossiness ) , _RoughnessCorrection ) );
+			o.Occlusion = ( tex2D( _OcclusionMap, staticSwitch127_g1 ).r * _OcclusionStrength );
 			o.Alpha = 1;
 		}
 
@@ -197,17 +204,17 @@ Shader "Esnya PBR/Opaque"
 	CustomEditor "EsnyaFactory.EsnyaPBRGUI"
 }
 /*ASEBEGIN
-Version=18712
-0;985;2346;1095;1761.779;327.8434;1;True;True
-Node;AmplifyShaderEditor.FunctionNode;125;-640,-256;Inherit;False;PBR;0;;13;da1a8a67aa976ee4a9419c7e6f582eff;0;0;11;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT3;115
-Node;AmplifyShaderEditor.IntNode;4;-640,128;Inherit;False;Property;_CullMode;Cull Mode;33;2;[Header];[Enum];Create;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
+Version=18900
+0;1191;2168;889;1672.779;224.8434;1;True;True
+Node;AmplifyShaderEditor.IntNode;4;-640,128;Inherit;False;Property;_CullMode;Cull Mode;34;2;[Header];[Enum];Create;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
+Node;AmplifyShaderEditor.FunctionNode;127;-640,-256;Inherit;False;EsnyaPBR;0;;1;da1a8a67aa976ee4a9419c7e6f582eff;2,175,1,179,0;1;180;FLOAT2;0,0;False;11;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT3;115
 Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;-256,-256;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;Esnya PBR/Opaque;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;0;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
-WireConnection;0;0;125;0
-WireConnection;0;1;125;34
-WireConnection;0;2;125;42
-WireConnection;0;3;125;30
-WireConnection;0;4;125;17
-WireConnection;0;5;125;44
-WireConnection;0;11;125;115
+WireConnection;0;0;127;0
+WireConnection;0;1;127;34
+WireConnection;0;2;127;42
+WireConnection;0;3;127;30
+WireConnection;0;4;127;17
+WireConnection;0;5;127;44
+WireConnection;0;11;127;115
 ASEEND*/
-//CHKSM=BE14A504E94EA72C4653B300F2C1FE2DDDBD5183
+//CHKSM=9186A7CAE407A7A8B5A752AAB25A5DC81CBF89F3

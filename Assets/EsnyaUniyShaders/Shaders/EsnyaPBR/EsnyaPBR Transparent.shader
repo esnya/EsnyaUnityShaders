@@ -15,6 +15,7 @@ Shader "Esnya PBR/Transparent"
 		[Header(Normal)][Toggle(_NORMALMAP)] _NORMALMAP("Use Normal Map", Float) = 0
 		[NoScaleOffset][Normal][EsnyaFactory.VisibleIf(_NORMALMAP)]_BumpMap("Normal Map", 2D) = "bump" {}
 		[VisibleIf(_NORMALMAP)]_BumpScale("Normal Scale", Float) = 1
+		[VisibleIf(_NORMALMAP)][Toggle(_NEAGTENORMALG_ON)] _NeagteNormalG("Neagte Normal G", Float) = 0
 		[Header(Emission)][Toggle(_EMISSION)] _EMISSION("Use Emission", Float) = 0
 		[HDR][NoScaleOffset][VisibleIf(_EMISSION)]_EmissionMap("EmissionMap", 2D) = "white" {}
 		[HDR][VisibleIf(_EMISSION)]_EmissionColor("Emission Color", Color) = (0,0,0,0)
@@ -31,8 +32,8 @@ Shader "Esnya PBR/Transparent"
 		[Header(Z Shift)][Toggle(_ZSHIFT_ON)] _ZShift("Z Shift", Float) = 0
 		[VisibleIf(_ZSHIFT_ON)]_ZShiftScale("Z Shift Scale", Float) = 0.005
 		_CullMode("CullMode", Int) = 2
-		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] _texcoord2( "", 2D ) = "white" {}
+		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 		[Header(Forward Rendering Options)]
 		[ToggleOff] _SpecularHighlights("Specular Highlights", Float) = 1.0
@@ -51,6 +52,7 @@ Shader "Esnya PBR/Transparent"
 		#pragma shader_feature _SPECULARHIGHLIGHTS_OFF
 		#pragma shader_feature _GLOSSYREFLECTIONS_OFF
 		#pragma shader_feature _ZSHIFT_ON
+		#pragma shader_feature _NEAGTENORMALG_ON
 		#pragma shader_feature _DETAIL_MULX2
 		#pragma shader_feature _NORMALMAP
 		#pragma shader_feature _PARALLAXMAP
@@ -173,7 +175,12 @@ Shader "Esnya PBR/Transparent"
 			#else
 				float3 staticSwitch138_g3 = staticSwitch143_g3;
 			#endif
-			o.Normal = staticSwitch138_g3;
+			#ifdef _NEAGTENORMALG_ON
+				float3 staticSwitch181_g3 = ( staticSwitch138_g3 * float3(1,-1,1) );
+			#else
+				float3 staticSwitch181_g3 = staticSwitch138_g3;
+			#endif
+			o.Normal = staticSwitch181_g3;
 			float4 temp_output_8_0_g3 = ( _Color * tex2D( _MainTex, staticSwitch127_g3 ) );
 			float3 temp_output_78_0_g3 = (temp_output_8_0_g3).rgb;
 			float2 uv_DetailAlbedoMap = i.uv_texcoord * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
@@ -288,10 +295,10 @@ Shader "Esnya PBR/Transparent"
 	CustomEditor "EsnyaFactory.EsnyaPBRGUI"
 }
 /*ASEBEGIN
-Version=18712
-0;985;2346;1095;1503.208;212.2362;1;True;True
-Node;AmplifyShaderEditor.FunctionNode;23;-512,-128;Inherit;False;PBR;0;;3;da1a8a67aa976ee4a9419c7e6f582eff;0;0;11;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT3;115
-Node;AmplifyShaderEditor.IntNode;24;-666.7084,306.2638;Inherit;False;Property;_CullMode;CullMode;33;0;Fetch;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
+Version=18900
+0;1191;2599;889;1629.708;109.2362;1;True;True
+Node;AmplifyShaderEditor.FunctionNode;23;-512,-128;Inherit;False;EsnyaPBR;0;;3;da1a8a67aa976ee4a9419c7e6f582eff;2,179,0,175,1;1;180;FLOAT2;0,0;False;11;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT3;115
+Node;AmplifyShaderEditor.IntNode;24;-666.7084,306.2638;Inherit;False;Property;_CullMode;CullMode;34;0;Fetch;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;-89,-125;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;Esnya PBR/Transparent;False;False;False;False;False;False;False;False;False;False;False;False;False;False;True;False;False;False;True;True;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Transparent;0.5;True;True;0;False;Transparent;;Transparent;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;2;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;True;24;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;0;0;23;0
 WireConnection;0;1;23;34
@@ -302,4 +309,4 @@ WireConnection;0;5;23;44
 WireConnection;0;9;23;14
 WireConnection;0;11;23;115
 ASEEND*/
-//CHKSM=B13FDF2B74417CCA2C89DE3E27FB3FB784EDD285
+//CHKSM=0F00AC33927DDB7C6BC6412294736074475BFCED

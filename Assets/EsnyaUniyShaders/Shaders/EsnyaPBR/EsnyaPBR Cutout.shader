@@ -15,6 +15,7 @@ Shader "Esnya PBR/Cutout"
 		[Header(Normal)][Toggle(_NORMALMAP)] _NORMALMAP("Use Normal Map", Float) = 0
 		[NoScaleOffset][Normal][EsnyaFactory.VisibleIf(_NORMALMAP)]_BumpMap("Normal Map", 2D) = "bump" {}
 		[VisibleIf(_NORMALMAP)]_BumpScale("Normal Scale", Float) = 1
+		[VisibleIf(_NORMALMAP)][Toggle(_NEAGTENORMALG_ON)] _NeagteNormalG("Neagte Normal G", Float) = 0
 		[Header(Emission)][Toggle(_EMISSION)] _EMISSION("Use Emission", Float) = 0
 		[HDR][NoScaleOffset][VisibleIf(_EMISSION)]_EmissionMap("EmissionMap", 2D) = "white" {}
 		[HDR][VisibleIf(_EMISSION)]_EmissionColor("Emission Color", Color) = (0,0,0,0)
@@ -45,6 +46,7 @@ Shader "Esnya PBR/Cutout"
 		#include "UnityStandardUtils.cginc"
 		#pragma target 3.0
 		#pragma shader_feature _ZSHIFT_ON
+		#pragma shader_feature _NEAGTENORMALG_ON
 		#pragma shader_feature _DETAIL_MULX2
 		#pragma shader_feature _NORMALMAP
 		#pragma shader_feature _PARALLAXMAP
@@ -170,7 +172,12 @@ Shader "Esnya PBR/Cutout"
 			#else
 				float3 staticSwitch138_g8 = staticSwitch143_g8;
 			#endif
-			o.Normal = staticSwitch138_g8;
+			#ifdef _NEAGTENORMALG_ON
+				float3 staticSwitch181_g8 = ( staticSwitch138_g8 * float3(1,-1,1) );
+			#else
+				float3 staticSwitch181_g8 = staticSwitch138_g8;
+			#endif
+			o.Normal = staticSwitch181_g8;
 			float4 temp_output_8_0_g8 = ( _Color * tex2D( _MainTex, staticSwitch127_g8 ) );
 			float3 temp_output_78_0_g8 = (temp_output_8_0_g8).rgb;
 			float2 uv_DetailAlbedoMap = i.uv_texcoord * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
@@ -200,11 +207,11 @@ Shader "Esnya PBR/Cutout"
 	CustomEditor "EsnyaFactory.EsnyaPBRGUI"
 }
 /*ASEBEGIN
-Version=18712
-0;985;2346;1095;1562.548;363.0095;1;True;True
-Node;AmplifyShaderEditor.FunctionNode;10;-512,-128;Inherit;False;PBR;0;;8;da1a8a67aa976ee4a9419c7e6f582eff;0;0;11;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT3;115
-Node;AmplifyShaderEditor.IntNode;4;-515,235;Inherit;False;Property;_CullMode;Cull Mode;33;2;[Header];[Enum];Create;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;0,-128;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;Esnya PBR/Cutout;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Masked;0.5;True;True;0;False;TransparentCutout;;AlphaTest;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;0;0;False;-1;0;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;34;-1;-1;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Version=18900
+0;1191;2599;889;1689.048;260.0095;1;True;True
+Node;AmplifyShaderEditor.FunctionNode;10;-512,-128;Inherit;False;EsnyaPBR;0;;8;da1a8a67aa976ee4a9419c7e6f582eff;2,175,1,179,0;1;180;FLOAT2;0,0;False;11;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT3;115
+Node;AmplifyShaderEditor.IntNode;4;-515,235;Inherit;False;Property;_CullMode;Cull Mode;34;2;[Header];[Enum];Create;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;0,-128;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;Esnya PBR/Cutout;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Masked;0.5;True;True;0;False;TransparentCutout;;AlphaTest;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;0;0;False;-1;0;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;35;-1;-1;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;0;0;10;0
 WireConnection;0;1;10;34
 WireConnection;0;2;10;42
@@ -214,4 +221,4 @@ WireConnection;0;5;10;44
 WireConnection;0;10;10;14
 WireConnection;0;11;10;115
 ASEEND*/
-//CHKSM=F7CC52D4096B12EF3DC54D9B9DEC4269E222D632
+//CHKSM=25399F34CFB2A896C2BC350F7109DD3C3E60A94F
