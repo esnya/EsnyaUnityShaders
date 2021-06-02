@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 34be90abd550304409012ef837a28971
+guid: 335540102121ab4449882f929ed45a52
 ScriptedImporter:
   fileIDToRecycleName:
     18700000: Texture2DArray
@@ -13,8 +13,6 @@ ScriptedImporter:
   - {fileID: 2800000, guid: bf65bfd1bd1be824fae19609e89fba36, type: 3}
   - {fileID: 2800000, guid: ee6ea0b8a5ac6dc47a47e7ded36ebb3f, type: 3}
   - {fileID: 2800000, guid: 334819d4e0e955f4b880aa3b72d6893c, type: 3}
-  overrideFormat: 0
-  textureFormat: 0
   filterMode: 0
   wrapModeU: 0
   wrapModeV: 0
