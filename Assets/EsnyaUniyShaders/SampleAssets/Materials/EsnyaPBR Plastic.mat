@@ -8,10 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: EsnyaPBR Plastic
-  m_Shader: {fileID: 4800000, guid: 7874ff0c63308204b9bdb81b2631233d, type: 3}
-  m_ShaderKeywords: _NORMALMAP _PARALLAXMAP
+  m_Shader: {fileID: 4800000, guid: 9f978d0de68029a42a27ffe3c36cb863, type: 3}
+  m_ShaderKeywords: _GeometricSpecularAA _NORMALMAP
   m_LightmapFlags: 2
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 6b84550b318402c47b115082434e9127, type: 3}
+        m_Texture: {fileID: 2800000, guid: f27f470fed679bb46ab17035cbcc5004, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedo:
@@ -48,7 +48,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 41180a9a7ee764345b2b3c6790e1d718, type: 3}
+        m_Texture: {fileID: 2800000, guid: dd2ba21c26c3eb1438076a317a1bea42, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -60,11 +60,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: add16a78176b7f849b277bce3e30c273, type: 3}
+        m_Texture: {fileID: 2800000, guid: e73f63f8e3a1fe94abf160aa0861c472, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: 6ed42d7c0e1161944b78b01d4d12bea1, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6bae23e6b58aa18469d9b6be79869cc7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -83,6 +83,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EMISSION: 0
+    - _GeometricSpecularAA1: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.2
     - _GlossyReflections: 1
@@ -91,7 +92,7 @@ Material:
     - _NORMALMAP: 1
     - _NeagteNormalG: 0
     - _OcclusionStrength: 1
-    - _PARALLAXMAP: 1
+    - _PARALLAXMAP: 0
     - _Parallax: 0.005
     - _RoughnessCorrection: 0.45
     - _SmoothnessTextureChannel: 0

@@ -8,10 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Debug Local Position
-  m_Shader: {fileID: 4800000, guid: 9ef165ebeaff16e4a95b4bc043582326, type: 3}
+  m_Shader: {fileID: 4800000, guid: d5d3c6ab273861f44a509e7e72c309f4, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 0
-  m_EnableInstancingVariants: 1
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}

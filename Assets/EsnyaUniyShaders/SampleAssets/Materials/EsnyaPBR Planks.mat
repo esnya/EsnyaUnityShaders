@@ -8,10 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: EsnyaPBR Planks
-  m_Shader: {fileID: 4800000, guid: 7874ff0c63308204b9bdb81b2631233d, type: 3}
+  m_Shader: {fileID: 4800000, guid: 9f978d0de68029a42a27ffe3c36cb863, type: 3}
   m_ShaderKeywords: _NORMALMAP _PARALLAXMAP
   m_LightmapFlags: 2
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 4c1a2207e0152fb4a9b9ce432c03d018, type: 3}
+        m_Texture: {fileID: 2800000, guid: 95176df6362f29541b6589935185219a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedo:
@@ -48,23 +48,23 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: eca9e28b0e046544b9df146c1d667a09, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5646fa0aaca94104c992fd79ad70bba4, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: 4b33b120fcc394947ac04a062ae5f50e, type: 3}
+        m_Texture: {fileID: 2800000, guid: 0c92fe24a3df6b74485adeffaa5700d1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 2800000, guid: b4a00182d2869984ab2665662698aca6, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4c3cafaa68b0c61499130d4045d7feba, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: feb5c61edb4aebf43b75707a8c664498, type: 3}
+        m_Texture: {fileID: 2800000, guid: fbca8757e14a7034ca8682534d517c0f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: e97170a2ad9f2cd4093e219904fce4e3, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3f754bbafd79109428410dc4bcde47b7, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -92,7 +92,7 @@ Material:
     - _NeagteNormalG: 0
     - _OcclusionStrength: 1
     - _PARALLAXMAP: 1
-    - _Parallax: 0.005
+    - _Parallax: 0.008
     - _RoughnessCorrection: 0.45
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1

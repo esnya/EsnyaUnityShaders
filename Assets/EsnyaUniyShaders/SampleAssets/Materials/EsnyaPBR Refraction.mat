@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: EsnyaPBR Refraction
-  m_Shader: {fileID: 4800000, guid: c47860c9e3750fa41bcabde479524e6e, type: 3}
+  m_Shader: {fileID: 4800000, guid: d5cfaf3e0af8562459cc7db0840b5368, type: 3}
   m_ShaderKeywords: _NORMALMAP
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 3197bbd72c8281143a97a296f196a481, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6bfa21b203d60b34aa156c7e27353667, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: a3ae50cfa48532b4fabf5e57f14fa1de, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4c085d75fe1583942ac0f5a4bd9cf7fe, type: 3}
         m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: a3ae50cfa48532b4fabf5e57f14fa1de, type: 3}
+        m_Texture: {fileID: 2800000, guid: 4c085d75fe1583942ac0f5a4bd9cf7fe, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TranslucencyMap:
@@ -92,12 +92,14 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EMISSION: 0
+    - _GeometricSpecularAA1: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.2
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 2
     - _NORMALMAP: 1
+    - _NeagteNormalG: 0
     - _OcclusionStrength: 1
     - _PARALLAXMAP: 0
     - _Parallax: 0.005

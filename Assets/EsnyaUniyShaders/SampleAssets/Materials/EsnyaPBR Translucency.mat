@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: EsnyaPBR Translucency
-  m_Shader: {fileID: 4800000, guid: 4ea67738ea7f0514881fc6db1c93beeb, type: 3}
-  m_ShaderKeywords: _NORMALMAP
+  m_Shader: {fileID: 4800000, guid: 8f58c05bf7ba62f43a6fcd2bdfd6f34a, type: 3}
+  m_ShaderKeywords: _NORMALMAP _PARALLAXMAP
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 96d5cdc4713a33a4e9222f9fe3a51878, type: 3}
+        m_Texture: {fileID: 2800000, guid: f3858e904fd1fc7468a722cf67c68f78, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: ea571a033c5efb14db3ed8c3a36c1f47, type: 3}
+        m_Texture: {fileID: 2800000, guid: 64af218a389940949a837af8025d223d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -56,7 +56,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: ecd0fe48153958d49a5a32629888da4f, type: 3}
+        m_Texture: {fileID: 2800000, guid: 5a4b96c69b3f7a44993c4ff565e6e6af, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RefractionMap:
@@ -64,7 +64,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: 9b941f879ce249a40a15bed8a87b59a9, type: 3}
+        m_Texture: {fileID: 2800000, guid: 624ad3d1cf3c01c49a4ec1528831bf14, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TranslucencyMap:
@@ -92,6 +92,7 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EMISSION: 0
+    - _GeometricSpecularAA1: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.2
     - _GlossyReflections: 1
@@ -100,7 +101,7 @@ Material:
     - _NORMALMAP: 1
     - _NeagteNormalG: 0
     - _OcclusionStrength: 1
-    - _PARALLAXMAP: 0
+    - _PARALLAXMAP: 1
     - _Parallax: 0.005
     - _RefractionStrength: 1.1
     - _RoughnessCorrection: 0.45

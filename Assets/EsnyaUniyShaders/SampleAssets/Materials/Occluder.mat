@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Occluder
-  m_Shader: {fileID: 4800000, guid: 74d0ea03d55d9ae4384e0f68c432c290, type: 3}
+  m_Shader: {fileID: 4800000, guid: 8cf905bb1cff85045afe10f914b2079f, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
