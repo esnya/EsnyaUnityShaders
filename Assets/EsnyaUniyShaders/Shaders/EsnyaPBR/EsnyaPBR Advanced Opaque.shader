@@ -7,10 +7,12 @@ Shader "Esnya PBR/Advanced/Opaque"
 		[Header(PBR Material)][Header(Base Color)]_Color("Color", Color) = (1,1,1,1)
 		_MainTex("Albedo", 2D) = "white" {}
 		[NoScaleOffset][VisibleIf(_DETAIL_MULX2)]_DetailMask("Detail Mask", 2D) = "white" {}
-		[Header(Roughness)][NoScaleOffset]_SpecGlossMap("Roughness Map", 2D) = "white" {}
-		_Glossiness("Roughness", Range( 0 , 1)) = 1
-		_RoughnessCorrection("Roughness Correction", Float) = 0.45
-		[Toggle(_GeometricSpecularAA)] _GeometricSpecularAA1("Geometric Specular AA", Float) = 0
+		[Header(Roughness  Smoothness)][Toggle(_METALLICGLOSSMAP)] _METALLICGLOSSMAP("Smoothness Setup", Float) = 0
+		[NoScaleOffset][EsnyaFactory.HideIf(_METALLICGLOSSMAP)]_SpecGlossMap("Roughness Map", 2D) = "white" {}
+		[Enum(Metallic Alpha,0,Albedo Alpha,1)]_SmoothnessTextureChannel("Smoothness Texture Channel", Float) = 0
+		_Glossiness("Roughness / Smoothness", Range( 0 , 1)) = 1
+		_RoughnessSmoothnessCorrection("Roughness / Smoothness Correction", Float) = 0.45
+		[Toggle(_GeometricSpecularAA)] _GeometricSpecularAA("Geometric Specular AA", Float) = 0
 		[Header(Metallic)][NoScaleOffset]_MetallicGlossMap("Metallic Map", 2D) = "white" {}
 		_Metallic("Metallic", Range( 0 , 1)) = 1
 		[Header(Normal)][Toggle(_NORMALMAP)] _NORMALMAP("Use Normal Map", Float) = 0
@@ -64,6 +66,7 @@ Shader "Esnya PBR/Advanced/Opaque"
 		#pragma shader_feature _NORMALMAP
 		#pragma shader_feature _PARALLAXMAP
 		#pragma shader_feature _EMISSION
+		#pragma shader_feature _METALLICGLOSSMAP
 		#pragma shader_feature _GeometricSpecularAA
 		#ifdef UNITY_PASS_SHADOWCASTER
 			#undef INTERNAL_DATA
@@ -116,7 +119,8 @@ Shader "Esnya PBR/Advanced/Opaque"
 		uniform float _Metallic;
 		uniform sampler2D _SpecGlossMap;
 		uniform float _Glossiness;
-		uniform float _RoughnessCorrection;
+		uniform float _RoughnessSmoothnessCorrection;
+		uniform float _SmoothnessTextureChannel;
 		uniform sampler2D _OcclusionMap;
 		uniform float _OcclusionStrength;
 		uniform sampler2D _TransmissionMap;
@@ -259,7 +263,8 @@ Shader "Esnya PBR/Advanced/Opaque"
 				float3 staticSwitch181_g23 = staticSwitch138_g23;
 			#endif
 			o.Normal = staticSwitch181_g23;
-			float4 temp_output_8_0_g23 = ( _Color * tex2D( _MainTex, staticSwitch127_g23 ) );
+			float4 tex2DNode5_g23 = tex2D( _MainTex, staticSwitch127_g23 );
+			float4 temp_output_8_0_g23 = ( _Color * tex2DNode5_g23 );
 			float3 temp_output_78_0_g23 = (temp_output_8_0_g23).rgb;
 			float2 uv_DetailAlbedoMap = i.uv_texcoord * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
 			float3 lerpResult157_g23 = lerp( (tex2D( _DetailAlbedoMap, uv_DetailAlbedoMap )).rgb , temp_output_78_0_g23 , tex2D( _DetailMask, uv_DetailMask152_g23 ).r);
@@ -275,7 +280,14 @@ Shader "Esnya PBR/Advanced/Opaque"
 				float3 staticSwitch129_g23 = float3( 0,0,0 );
 			#endif
 			o.Emission = staticSwitch129_g23;
-			o.Metallic = ( tex2D( _MetallicGlossMap, staticSwitch127_g23 ).r * _Metallic );
+			float4 tex2DNode28_g23 = tex2D( _MetallicGlossMap, staticSwitch127_g23 );
+			o.Metallic = ( tex2DNode28_g23.r * _Metallic );
+			float lerpResult191_g23 = lerp( tex2DNode28_g23.a , tex2DNode5_g23.a , _SmoothnessTextureChannel);
+			#ifdef _METALLICGLOSSMAP
+				float staticSwitch189_g23 = pow( ( lerpResult191_g23 * _Glossiness ) , _RoughnessSmoothnessCorrection );
+			#else
+				float staticSwitch189_g23 = ( 1.0 - pow( ( tex2D( _SpecGlossMap, staticSwitch127_g23 ).r * _Glossiness ) , _RoughnessSmoothnessCorrection ) );
+			#endif
 			float3 newWorldNormal3_g24 = (WorldNormalVector( i , staticSwitch181_g23 ));
 			float3 temp_output_6_0_g24 = ddx( newWorldNormal3_g24 );
 			float dotResult7_g24 = dot( temp_output_6_0_g24 , temp_output_6_0_g24 );
@@ -286,7 +298,7 @@ Shader "Esnya PBR/Advanced/Opaque"
 			#else
 				float staticSwitch187_g23 = 1.0;
 			#endif
-			o.Smoothness = min( ( 1.0 - pow( ( tex2D( _SpecGlossMap, staticSwitch127_g23 ).r * _Glossiness ) , _RoughnessCorrection ) ) , staticSwitch187_g23 );
+			o.Smoothness = min( staticSwitch189_g23 , staticSwitch187_g23 );
 			o.Occlusion = ( tex2D( _OcclusionMap, staticSwitch127_g23 ).r * _OcclusionStrength );
 			o.Transmission = ( (tex2D( _TransmissionMap, staticSwitch127_g23 )).rgb * (_TransmissionColor).rgb );
 			o.Translucency = ( (tex2D( _TranslucencyMap, staticSwitch127_g23 )).rgb * (_TranslucencyColor).rgb );
@@ -385,10 +397,10 @@ Shader "Esnya PBR/Advanced/Opaque"
 }
 /*ASEBEGIN
 Version=18909
-736;1177;1845;731;1126.787;206.0783;1;True;True
-Node;AmplifyShaderEditor.FunctionNode;25;-512,-128;Inherit;False;EsnyaPBR;0;;23;d7448cd6078718a4b92322da44cf5771;2,175,1,179,0;1;180;FLOAT2;0,0;False;11;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT3;115
-Node;AmplifyShaderEditor.IntNode;4;-545,224;Inherit;False;Property;_CullMode;Cull Mode;42;2;[Header];[Enum];Create;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;0,-128;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;Esnya PBR/Advanced/Opaque;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;ForwardOnly;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;0;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;35;-1;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+0;1191;2600;889;1504.287;285.0783;1;True;True
+Node;AmplifyShaderEditor.FunctionNode;25;-512,-128;Inherit;False;EsnyaPBR;0;;23;d7448cd6078718a4b92322da44cf5771;2,179,0,175,1;1;180;FLOAT2;0,0;False;11;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT3;115
+Node;AmplifyShaderEditor.IntNode;4;-545,224;Inherit;False;Property;_CullMode;Cull Mode;44;2;[Header];[Enum];Create;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;0,-128;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;Esnya PBR/Advanced/Opaque;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Opaque;0.5;True;True;0;False;Opaque;;Geometry;ForwardOnly;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;0;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;37;-1;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;0;0;25;0
 WireConnection;0;1;25;34
 WireConnection;0;2;25;42
@@ -399,4 +411,4 @@ WireConnection;0;6;25;89
 WireConnection;0;7;25;96
 WireConnection;0;11;25;115
 ASEEND*/
-//CHKSM=5FEAA7F0DB23484C4ED8BF7828780C61DE42A09A
+//CHKSM=11683F873D168EEE6FA73F8153CF5665B3067ABB

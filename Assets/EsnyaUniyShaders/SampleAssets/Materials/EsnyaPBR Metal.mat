@@ -83,10 +83,12 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EMISSION: 0
+    - _GeometricSpecularAA: 1
     - _GeometricSpecularAA1: 1
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
+    - _METALLICGLOSSMAP: 0
     - _Metallic: 1
     - _Mode: 2
     - _NORMALMAP: 1
@@ -95,6 +97,7 @@ Material:
     - _PARALLAXMAP: 0
     - _Parallax: 0.005
     - _RoughnessCorrection: 1
+    - _RoughnessSmoothnessCorrection: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

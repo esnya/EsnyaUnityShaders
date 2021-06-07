@@ -52,7 +52,7 @@ LightmapSettings:
     m_AlbedoBoost: 1
     m_EnvironmentLightingMode: 0
     m_EnableBakedLightmaps: 1
-    m_EnableRealtimeLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
     serializedVersion: 10
     m_Resolution: 2
@@ -120,6 +120,31 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 787984839746514230, guid: 2083cb1b423ff8b4a87f42de92bc201c,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 123
+      objectReference: {fileID: 0}
+    - target: {fileID: 2520025751759823955, guid: 2083cb1b423ff8b4a87f42de92bc201c,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 123
+      objectReference: {fileID: 0}
+    - target: {fileID: 5396652477682397284, guid: 2083cb1b423ff8b4a87f42de92bc201c,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 123
+      objectReference: {fileID: 0}
+    - target: {fileID: 8049935552127062662, guid: 2083cb1b423ff8b4a87f42de92bc201c,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 123
+      objectReference: {fileID: 0}
+    - target: {fileID: 8175410798000727803, guid: 2083cb1b423ff8b4a87f42de92bc201c,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a0566cc25fa37b14ea0444516a0cfe23, type: 2}
     - target: {fileID: 8641230660247890733, guid: 2083cb1b423ff8b4a87f42de92bc201c,
         type: 3}
       propertyPath: m_Name
