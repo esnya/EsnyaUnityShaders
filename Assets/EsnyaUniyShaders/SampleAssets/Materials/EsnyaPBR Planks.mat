@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: EsnyaPBR Planks
   m_Shader: {fileID: 4800000, guid: 9f978d0de68029a42a27ffe3c36cb863, type: 3}
-  m_ShaderKeywords: _NORMALMAP _PARALLAXMAP
+  m_ShaderKeywords: _GeometricSpecularAA _NORMALMAP _PARALLAXMAP
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -83,9 +83,11 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EMISSION: 0
+    - _GeometricSpecularAA: 1
     - _GlossMapScale: 1
     - _Glossiness: 1
     - _GlossyReflections: 1
+    - _METALLICGLOSSMAP: 0
     - _Metallic: 1
     - _Mode: 2
     - _NORMALMAP: 1
@@ -94,6 +96,7 @@ Material:
     - _PARALLAXMAP: 1
     - _Parallax: 0.008
     - _RoughnessCorrection: 0.45
+    - _RoughnessSmoothnessCorrection: 0.45
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
