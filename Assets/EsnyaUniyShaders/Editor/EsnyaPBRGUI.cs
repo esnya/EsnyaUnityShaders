@@ -28,15 +28,19 @@ namespace EsnyaFactory {
 
     public class VisibleIfDrawer : MaterialPropertyDrawer
     {
-        protected string keyword;
-        public VisibleIfDrawer(string keyword)
+        protected string[] keywords;
+        public VisibleIfDrawer(string keyword1)
         {
-            this.keyword = keyword;
+            keywords = new [] { keyword1 };
+        }
+        public VisibleIfDrawer(string keyword1, string keyword2)
+        {
+            keywords = new [] { keyword1, keyword2 };
         }
 
         protected virtual bool IsVisible(MaterialEditor editor)
         {
-            return !editor.targets.Select(m => m as Material).Any(m => m.shaderKeywords == null || !m.shaderKeywords.Contains(keyword));
+            return !editor.targets.Select(m => m as Material).Any(m => m.shaderKeywords == null || !m.shaderKeywords.Any(keyword => keywords.Contains(keyword)));
         }
 
         public override void OnGUI(Rect position, MaterialProperty prop, string label, MaterialEditor editor)
@@ -55,6 +59,7 @@ namespace EsnyaFactory {
     public class HideIfDrawer : VisibleIfDrawer
     {
         public HideIfDrawer(string keyword) : base(keyword) {}
+        public HideIfDrawer(string keyword1, string keyword2) : base(keyword1, keyword2) {}
 
         protected override bool IsVisible(MaterialEditor editor)
         {
