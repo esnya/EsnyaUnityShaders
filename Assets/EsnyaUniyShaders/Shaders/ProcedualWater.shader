@@ -30,7 +30,7 @@ Shader "EsnyaShaders/ProcedualWater"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#pragma target 3.0
-		#pragma surface surf Standard alpha:fade keepalpha nolightmap  nodirlightmap nometa noforwardadd vertex:vertexDataFunc 
+		#pragma surface surf Standard alpha:fade keepalpha novertexlights nolightmap  nodirlightmap nometa noforwardadd vertex:vertexDataFunc 
 		struct Input
 		{
 			float3 worldPos;
@@ -90,7 +90,7 @@ Shader "EsnyaShaders/ProcedualWater"
 		}
 
 
-		float3 PerturbNormal107_g4( float3 surf_pos, float3 surf_norm, float height, float scale )
+		float3 PerturbNormal61_g3( float3 surf_pos, float3 surf_norm, float height, float scale )
 		{
 			// "Bump Mapping Unparametrized Surfaces on the GPU" by Morten S. Mikkelsen
 			float3 vSigmaS = ddx( surf_pos );
@@ -118,26 +118,31 @@ Shader "EsnyaShaders/ProcedualWater"
 		void surf( Input i , inout SurfaceOutputStandard o )
 		{
 			float3 ase_worldPos = i.worldPos;
-			float3 surf_pos107_g4 = ase_worldPos;
+			float3 temp_output_50_0_g3 = ase_worldPos;
+			float3 surf_pos61_g3 = temp_output_50_0_g3;
 			float3 ase_worldNormal = WorldNormalVector( i, float3( 0, 0, 1 ) );
-			float3 surf_norm107_g4 = ase_worldNormal;
-			float2 appendResult14_g3 = (float2(ase_worldPos.x , ase_worldPos.z));
+			float3 ase_vertexNormal = mul( unity_WorldToObject, float4( ase_worldNormal, 0 ) );
+			float3 objToWorldDir10_g3 = mul( unity_ObjectToWorld, float4( ase_vertexNormal, 0 ) ).xyz;
+			float3 temp_output_53_0_g3 = objToWorldDir10_g3;
+			float3 surf_norm61_g3 = temp_output_53_0_g3;
+			float3 break52_g3 = temp_output_50_0_g3;
+			float2 appendResult14_g3 = (float2(break52_g3.x , break52_g3.z));
 			float simplePerlin2D21_g3 = snoise( ( appendResult14_g3 + ( _Wave1Direction * _Wave1Speed * _Time.y ) )*_Wave1Scale );
 			simplePerlin2D21_g3 = simplePerlin2D21_g3*0.5 + 0.5;
 			float simplePerlin2D20_g3 = snoise( ( appendResult14_g3 + ( _Wave2Direction * _Wave2Speed * _Time.y ) )*_Wave2Scale );
 			simplePerlin2D20_g3 = simplePerlin2D20_g3*0.5 + 0.5;
-			float height107_g4 = ( pow( ( simplePerlin2D21_g3 * _Wave1Strength ) , _Wave1Curve ) + pow( ( simplePerlin2D20_g3 * _Wave2Strength ) , _Wave2Curve ) );
-			float3 ase_vertexNormal = mul( unity_WorldToObject, float4( ase_worldNormal, 0 ) );
-			float3 objToWorldDir10_g3 = mul( unity_ObjectToWorld, float4( ase_vertexNormal, 0 ) ).xyz;
+			float temp_output_41_0_g3 = ( pow( ( simplePerlin2D21_g3 * _Wave1Strength ) , _Wave1Curve ) + pow( ( simplePerlin2D20_g3 * _Wave2Strength ) , _Wave2Curve ) );
+			float height61_g3 = temp_output_41_0_g3;
 			float3 ase_worldViewDir = normalize( UnityWorldSpaceViewDir( ase_worldPos ) );
-			float dotResult15_g3 = dot( objToWorldDir10_g3 , ase_worldViewDir );
-			float scale107_g4 = ( _WaveStrength * saturate( ( abs( dotResult15_g3 ) / _WaveDistanceAttenuation ) ) );
-			float3 localPerturbNormal107_g4 = PerturbNormal107_g4( surf_pos107_g4 , surf_norm107_g4 , height107_g4 , scale107_g4 );
+			float dotResult15_g3 = dot( temp_output_53_0_g3 , ase_worldViewDir );
+			float temp_output_42_0_g3 = ( _WaveStrength * saturate( ( abs( dotResult15_g3 ) / _WaveDistanceAttenuation ) ) );
+			float scale61_g3 = temp_output_42_0_g3;
+			float3 localPerturbNormal61_g3 = PerturbNormal61_g3( surf_pos61_g3 , surf_norm61_g3 , height61_g3 , scale61_g3 );
 			float3 ase_worldTangent = WorldNormalVector( i, float3( 1, 0, 0 ) );
 			float3 ase_worldBitangent = WorldNormalVector( i, float3( 0, 1, 0 ) );
 			float3x3 ase_worldToTangent = float3x3( ase_worldTangent, ase_worldBitangent, ase_worldNormal );
-			float3 worldToTangentDir42_g4 = mul( ase_worldToTangent, localPerturbNormal107_g4);
-			o.Normal = worldToTangentDir42_g4;
+			float3 worldToTangentDir60_g3 = mul( ase_worldToTangent, localPerturbNormal61_g3);
+			o.Normal = worldToTangentDir60_g3;
 			float4 ase_screenPos34_g3 = i.screenPosition34_g3;
 			float4 ase_screenPosNorm34 = ase_screenPos34_g3 / ase_screenPos34_g3.w;
 			ase_screenPosNorm34.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm34.z : ase_screenPosNorm34.z * 0.5 + 0.5;
@@ -156,12 +161,12 @@ Shader "EsnyaShaders/ProcedualWater"
 }
 /*ASEBEGIN
 Version=18909
-0;1192;1553;888;-3435.268;240.2408;1;True;True
-Node;AmplifyShaderEditor.FunctionNode;109;3982.651,49.98707;Inherit;False;Procedual Water;0;;3;00be91958253a3048bc5d9152655524e;0;0;4;FLOAT3;47;FLOAT;48;FLOAT;49;FLOAT3;0
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;4595.806,-221.1395;Float;False;True;-1;2;ASEMaterialInspector;0;0;Standard;EsnyaShaders/ProcedualWater;False;False;False;False;False;False;True;False;True;False;True;True;False;False;True;True;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Transparent;0.5;True;False;0;False;Transparent;;Transparent;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;2;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+1203;598;2456;1350;-2983.768;465.2408;1;True;True
+Node;AmplifyShaderEditor.FunctionNode;109;3982.651,49.98707;Inherit;False;Procedual Water;0;;3;00be91958253a3048bc5d9152655524e;1,54,1;3;50;FLOAT3;0,0,0;False;53;FLOAT3;0,0,0;False;55;FLOAT3;0,0,0;False;6;FLOAT;58;FLOAT3;0;FLOAT3;47;FLOAT3;56;FLOAT;48;FLOAT;49
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;4595.806,-221.1395;Float;False;True;-1;2;ASEMaterialInspector;0;0;Standard;EsnyaShaders/ProcedualWater;False;False;False;False;False;True;True;False;True;False;True;True;False;False;True;True;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Transparent;0.5;True;False;0;False;Transparent;;Transparent;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;2;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;0;0;109;0
 WireConnection;0;1;109;47
 WireConnection;0;4;109;48
 WireConnection;0;9;109;49
 ASEEND*/
-//CHKSM=C773948633C212A23E3E73CB2C0A699611E80521
+//CHKSM=C192A47629710634ABBA4C37135B525EA7502E43
