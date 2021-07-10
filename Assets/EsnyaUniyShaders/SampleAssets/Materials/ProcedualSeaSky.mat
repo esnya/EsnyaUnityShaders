@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: ProcedualSeaSky
   m_Shader: {fileID: 4800000, guid: 732c68b28ff818f4db74bd5dc57b9df0, type: 3}
-  m_ShaderKeywords: _SUNDISK1_HIGHQUARITY _SUNDISK3_HIGHQUARITY _SUNDISK_HIGHQUALITY
+  m_ShaderKeywords: _FAKESEA_ON _SUNDISK1_HIGHQUARITY _SUNDISK3_HIGHQUARITY _SUNDISK_HIGHQUALITY
     _SUNDISK_HIGHQUARITY
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
@@ -21,8 +21,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs: []
     m_Floats:
+    - _AtmosphereAttenuation: 0
+    - _AtmosphereAttenuationBias: 0
     - _AtmosphereThickness: 0.81
     - _Exposure: 1.3
+    - _FakeSea: 1
     - _FresnelBias: 0
     - _FresnelPower: 5
     - _FresnelScale: 10.34

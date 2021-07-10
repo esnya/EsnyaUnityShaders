@@ -7,9 +7,12 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 		_SunSize("Sun Size", Range( 0 , 1)) = 0.04
 		_SunSizeConvergence("Sun Size Convergence", Range( 0 , 10)) = 5
 		_AtmosphereThickness("Atmosphere Thickness", Range( 0 , 5)) = 1
+		_AtmosphereAttenuationBias("Atmosphere Attenuation Bias", Float) = 0
+		[Gamma]_AtmosphereAttenuation("Atmosphere Attenuation", Float) = 0
 		_SkyTint("Sky Tint", Color) = (0.5,0.5,0.5,1)
 		[KeywordEnum(None,Simple,HighQuarity)] _SunDisk("Sun", Float) = 2
 		_Exposure("Exposure", Range( 0 , 8)) = 1.3
+		[Toggle(_FAKESEA_ON)] _FakeSea("Fake Sea", Float) = 1
 		_Color2("Deep Color", Color) = (0.05098039,0.2196078,0.3764706,1)
 		_WaveStrength("Wave Strength", Float) = 1
 		[Gamma]_WaveDistanceAttenuation("Wave Distance Attenuation", Range( 0 , 1)) = 0.5
@@ -39,6 +42,7 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#pragma target 3.0
+		#pragma shader_feature _FAKESEA_ON
 		#pragma multi_compile _SUNDISK_NONE _SUNDISK_SIMPLE _SUNDISK_HIGHQUARITY
 		#pragma surface surf Unlit keepalpha noshadow noinstancing noambient novertexlights nolightmap  nodynlightmap nodirlightmap nofog nometa noforwardadd 
 		struct Input
@@ -47,6 +51,13 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 			INTERNAL_DATA
 		};
 
+		uniform float _Exposure;
+		uniform float4 _SkyTint;
+		uniform float _AtmosphereThickness;
+		uniform float _AtmosphereAttenuation;
+		uniform float _AtmosphereAttenuationBias;
+		uniform float _SunSizeConvergence;
+		uniform float _SunSize;
 		uniform float4 _Color2;
 		uniform float _WaterSurfaceProjectionScale;
 		uniform float2 _Wave1Direction;
@@ -61,11 +72,6 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 		uniform float _Wave2Curve;
 		uniform float _WaveStrength;
 		uniform float _WaveDistanceAttenuation;
-		uniform float _Exposure;
-		uniform float4 _SkyTint;
-		uniform float _AtmosphereThickness;
-		uniform float _SunSizeConvergence;
-		uniform float _SunSize;
 		uniform float _FresnelBias;
 		uniform float _FresnelScale;
 		uniform float _FresnelPower;
@@ -126,6 +132,88 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 
 		void surf( Input i , inout SurfaceOutput o )
 		{
+			float temp_output_37_0_g284 = ( 1.025 - 1.0 );
+			float temp_output_45_0_g284 = ( ( 1.0 / temp_output_37_0_g284 ) / 0.25 );
+			float3 ase_vertex3Pos = mul( unity_WorldToObject, float4( i.worldPos , 1 ) );
+			float3 objToWorldDir92_g284 = mul( unity_ObjectToWorld, float4( ase_vertex3Pos, 0 ) ).xyz;
+			float3 normalizeResult94_g284 = normalize( objToWorldDir92_g284 );
+			float lerpResult301_g284 = lerp( 1.0 , -1.0 , step( normalizeResult94_g284.y , 0.0 ));
+			float3 appendResult89_g284 = (float3(0.0 , ( 0.0001 + 1.0 ) , 0.0));
+			float dotResult116_g284 = dot( ( normalizeResult94_g284 * lerpResult301_g284 ) , appendResult89_g284 );
+			float temp_output_9_0_g293 = ( 1.0 - ( dotResult116_g284 / ( 1.0 + 0.0001 ) ) );
+			float temp_output_123_0_g284 = ( ( sqrt( ( ( 1.025 * 1.025 ) + ( ( 1.0 * ( normalizeResult94_g284 * lerpResult301_g284 ).y * ( normalizeResult94_g284 * lerpResult301_g284 ).y ) - 1.0 ) ) ) - ( 1.0 * ( normalizeResult94_g284 * lerpResult301_g284 ).y ) ) / 2.0 );
+			float3 temp_output_127_0_g284 = ( ( normalizeResult94_g284 * lerpResult301_g284 ) * temp_output_123_0_g284 );
+			float3 temp_output_2_0_g286 = ( appendResult89_g284 + ( temp_output_127_0_g284 * float3( 0.5,0.5,0.5 ) ) );
+			float temp_output_1_0_g286 = length( temp_output_2_0_g286 );
+			float temp_output_8_0_g286 = exp( ( 0.0 * ( 1.0 - temp_output_1_0_g286 ) ) );
+			float dotResult11_g286 = dot( _WorldSpaceLightPos0.xyz , temp_output_2_0_g286 );
+			float temp_output_9_0_g288 = ( 1.0 - ( dotResult11_g286 / temp_output_1_0_g286 ) );
+			float dotResult15_g286 = dot( ( normalizeResult94_g284 * lerpResult301_g284 ) , temp_output_2_0_g286 );
+			float temp_output_9_0_g287 = ( 1.0 - ( dotResult15_g286 / temp_output_1_0_g286 ) );
+			float clampResult27_g286 = clamp( ( ( exp( ( -1.0 * temp_output_45_0_g284 * 0.0001 ) ) * ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g293 * ( 0.0459 + ( temp_output_9_0_g293 * ( 3.83 + ( temp_output_9_0_g293 * ( -6.8 + ( temp_output_9_0_g293 * 5.25 ) ) ) ) ) ) ) ) ) ) ) + ( temp_output_8_0_g286 * ( ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g288 * ( 0.0459 + ( temp_output_9_0_g288 * ( 3.83 + ( temp_output_9_0_g288 * ( -6.8 + ( temp_output_9_0_g288 * 5.25 ) ) ) ) ) ) ) ) ) ) - ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g287 * ( 0.0459 + ( temp_output_9_0_g287 * ( 3.83 + ( temp_output_9_0_g287 * ( -6.8 + ( temp_output_9_0_g287 * 5.25 ) ) ) ) ) ) ) ) ) ) ) ) ) , 0.0 , 50.0 );
+			float3 temp_output_69_0_g284 = (_SkyTint).rgb;
+			float3 lerpResult72_g284 = lerp( ( float3(0.65,0.57,0.475) - float3(0.15,0.15,0.15) ) , ( float3(0.65,0.57,0.475) + float3(0.15,0.15,0.15) ) , ( 1.0 - temp_output_69_0_g284 ));
+			float3 temp_output_81_0_g284 = ( float3( 1,1,1 ) / pow( lerpResult72_g284 , 4.0 ) );
+			float lerpResult20_g284 = lerp( 0.0 , 0.0025 , pow( ( _AtmosphereThickness / ( max( ( _AtmosphereAttenuation * ( (mul( unity_CameraToWorld, float4(0,0,0,1) )).y + _AtmosphereAttenuationBias ) ) , 0.0 ) + 1.0 ) ) , 2.5 ));
+			float3 temp_output_2_0_g290 = ( temp_output_2_0_g286 + temp_output_127_0_g284 );
+			float temp_output_1_0_g290 = length( temp_output_2_0_g290 );
+			float temp_output_8_0_g290 = exp( ( temp_output_45_0_g284 * ( 1.0 - temp_output_1_0_g290 ) ) );
+			float dotResult11_g290 = dot( _WorldSpaceLightPos0.xyz , temp_output_2_0_g290 );
+			float temp_output_9_0_g292 = ( 1.0 - ( dotResult11_g290 / temp_output_1_0_g290 ) );
+			float dotResult15_g290 = dot( ( normalizeResult94_g284 * lerpResult301_g284 ) , temp_output_2_0_g290 );
+			float temp_output_9_0_g291 = ( 1.0 - ( dotResult15_g290 / temp_output_1_0_g290 ) );
+			float clampResult27_g290 = clamp( ( ( exp( ( -1.0 * temp_output_45_0_g284 * 0.0001 ) ) * ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g293 * ( 0.0459 + ( temp_output_9_0_g293 * ( 3.83 + ( temp_output_9_0_g293 * ( -6.8 + ( temp_output_9_0_g293 * 5.25 ) ) ) ) ) ) ) ) ) ) ) + ( temp_output_8_0_g290 * ( ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g292 * ( 0.0459 + ( temp_output_9_0_g292 * ( 3.83 + ( temp_output_9_0_g292 * ( -6.8 + ( temp_output_9_0_g292 * 5.25 ) ) ) ) ) ) ) ) ) ) - ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g291 * ( 0.0459 + ( temp_output_9_0_g291 * ( 3.83 + ( temp_output_9_0_g291 * ( -6.8 + ( temp_output_9_0_g291 * 5.25 ) ) ) ) ) ) ) ) ) ) ) ) ) , 0.0 , 50.0 );
+			float3 temp_output_281_0_g284 = ( ( float3( 0,0,0 ) + ( exp( ( -1.0 * clampResult27_g286 * ( ( temp_output_81_0_g284 * ( ( lerpResult20_g284 * 4.0 ) * UNITY_PI ) ) + ( ( 0.001 * 4.0 ) * UNITY_PI ) ) ) ) * temp_output_8_0_g286 * ( temp_output_123_0_g284 * ( 1.0 / temp_output_37_0_g284 ) ) ) ) + ( exp( ( -1.0 * clampResult27_g290 * ( ( temp_output_81_0_g284 * ( ( lerpResult20_g284 * 4.0 ) * UNITY_PI ) ) + ( ( 0.001 * 4.0 ) * UNITY_PI ) ) ) ) * temp_output_8_0_g290 * ( temp_output_123_0_g284 * ( 1.0 / temp_output_37_0_g284 ) ) ) );
+			float3 temp_output_142_0_g284 = ( temp_output_281_0_g284 * ( temp_output_81_0_g284 * ( 20.0 * lerpResult20_g284 ) ) );
+			float dotResult7_g289 = dot( _WorldSpaceLightPos0.xyz , ( normalizeResult94_g284 * lerpResult301_g284 ) );
+			float3 normalizeResult193_g284 = normalize( ( ( normalizeResult94_g284 * lerpResult301_g284 ) * -1.0 ) );
+			float3 lerpResult198_g284 = lerp( ( _Exposure * ( temp_output_142_0_g284 * ( 0.75 + ( 0.75 * ( dotResult7_g289 * dotResult7_g289 ) ) ) ) ) , float3( 0,0,0 ) , saturate( ( normalizeResult193_g284.y / 0.02 ) ));
+			float3 temp_output_143_0_g284 = ( temp_output_281_0_g284 * ( 0.001 * 20.0 ) );
+			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
+			float4 ase_lightColor = 0;
+			#else //aselc
+			float4 ase_lightColor = _LightColor0;
+			#endif //aselc
+			float clampResult174_g284 = clamp( ase_lightColor.a , 0.25 , 1.0 );
+			#if defined(_SUNDISK_NONE)
+				float3 staticSwitch172_g284 = float3( 0,0,0 );
+			#elif defined(_SUNDISK_SIMPLE)
+				float3 staticSwitch172_g284 = ( ( 27.0 * saturate( ( temp_output_143_0_g284 * ( 400.0 * 20.0 ) ) ) * ase_lightColor.rgb ) / clampResult174_g284 );
+			#elif defined(_SUNDISK_HIGHQUARITY)
+				float3 staticSwitch172_g284 = ( ( 15.0 * saturate( temp_output_143_0_g284 ) * ase_lightColor.rgb ) / clampResult174_g284 );
+			#else
+				float3 staticSwitch172_g284 = ( ( 15.0 * saturate( temp_output_143_0_g284 ) * ase_lightColor.rgb ) / clampResult174_g284 );
+			#endif
+			float3 temp_output_14_0_g294 = _WorldSpaceLightPos0.xyz;
+			float3 temp_output_224_0_g284 = ( normalizeResult94_g284 * 1.0 );
+			float3 temp_output_15_0_g294 = temp_output_224_0_g284;
+			float dotResult19_g294 = dot( temp_output_14_0_g294 , temp_output_15_0_g294 );
+			float temp_output_13_0_g294 = pow( saturate( dotResult19_g294 ) , _SunSizeConvergence );
+			float temp_output_21_0_g294 = _SunSize;
+			float temp_output_21_0_g285 = _SunSize;
+			float3 temp_output_14_0_g285 = _WorldSpaceLightPos0.xyz;
+			float3 temp_output_15_0_g285 = temp_output_224_0_g284;
+			float smoothstepResult10_g285 = smoothstep( temp_output_21_0_g285 , length( ( temp_output_14_0_g285 - temp_output_15_0_g285 ) ) , 0.0);
+			#if defined(_SUNDISK_NONE)
+				float staticSwitch222_g284 = 0.0;
+			#elif defined(_SUNDISK_SIMPLE)
+				float staticSwitch222_g284 = ( smoothstepResult10_g285 * smoothstepResult10_g285 );
+			#elif defined(_SUNDISK_HIGHQUARITY)
+				float staticSwitch222_g284 = ( ( 1.5 * ( ( 1.0 - 0.9801 ) / ( 2.0 + 0.9801 ) ) * ( 1.0 + ( temp_output_13_0_g294 * temp_output_13_0_g294 ) ) ) / max( pow( ( ( 1.0 + 0.9801 ) - ( 2.0 * -0.99 * ( temp_output_13_0_g294 * -1.0 ) ) ) , ( pow( temp_output_21_0_g294 , 0.65 ) * 10.0 ) ) , 0.0001 ) );
+			#else
+				float staticSwitch222_g284 = ( ( 1.5 * ( ( 1.0 - 0.9801 ) / ( 2.0 + 0.9801 ) ) * ( 1.0 + ( temp_output_13_0_g294 * temp_output_13_0_g294 ) ) ) / max( pow( ( ( 1.0 + 0.9801 ) - ( 2.0 * -0.99 * ( temp_output_13_0_g294 * -1.0 ) ) ) , ( pow( temp_output_21_0_g294 , 0.65 ) * 10.0 ) ) , 0.0001 ) );
+			#endif
+			float3 temp_output_204_0_g284 = ( lerpResult198_g284 + ( staticSwitch172_g284 * staticSwitch222_g284 ) );
+			#if defined(_SUNDISK_NONE)
+				float3 staticSwitch202_g284 = lerpResult198_g284;
+			#elif defined(_SUNDISK_SIMPLE)
+				float3 staticSwitch202_g284 = temp_output_204_0_g284;
+			#elif defined(_SUNDISK_HIGHQUARITY)
+				float3 staticSwitch202_g284 = temp_output_204_0_g284;
+			#else
+				float3 staticSwitch202_g284 = temp_output_204_0_g284;
+			#endif
+			float3 temp_output_122_226 = staticSwitch202_g284;
 			float3 ase_worldPos = i.worldPos;
 			float3 ase_worldViewDir = normalize( UnityWorldSpaceViewDir( ase_worldPos ) );
 			float3 temp_output_50_0_g250 = ( ( ( ase_worldViewDir * ( _WorldSpaceCameraPos.y / ase_worldViewDir.y ) ) - ( _WorldSpaceCameraPos * float3( 1,0,1 ) ) ) * _WaterSurfaceProjectionScale );
@@ -152,93 +240,16 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
 			float dotResult71 = dot( temp_output_101_56 , ase_worldlightDir );
-			float temp_output_37_0_g262 = ( 1.025 - 1.0 );
-			float temp_output_45_0_g262 = ( ( 1.0 / temp_output_37_0_g262 ) / 0.25 );
-			float3 ase_vertex3Pos = mul( unity_WorldToObject, float4( i.worldPos , 1 ) );
-			float3 objToWorldDir92_g262 = mul( unity_ObjectToWorld, float4( ase_vertex3Pos, 0 ) ).xyz;
-			float3 normalizeResult94_g262 = normalize( objToWorldDir92_g262 );
-			float lerpResult301_g262 = lerp( 1.0 , -1.0 , step( normalizeResult94_g262.y , 0.0 ));
-			float3 appendResult89_g262 = (float3(0.0 , ( 0.0001 + 1.0 ) , 0.0));
-			float dotResult116_g262 = dot( ( normalizeResult94_g262 * lerpResult301_g262 ) , appendResult89_g262 );
-			float temp_output_9_0_g266 = ( 1.0 - ( dotResult116_g262 / ( 1.0 + 0.0001 ) ) );
-			float temp_output_123_0_g262 = ( ( sqrt( ( ( 1.025 * 1.025 ) + ( ( 1.0 * ( normalizeResult94_g262 * lerpResult301_g262 ).y * ( normalizeResult94_g262 * lerpResult301_g262 ).y ) - 1.0 ) ) ) - ( 1.0 * ( normalizeResult94_g262 * lerpResult301_g262 ).y ) ) / 2.0 );
-			float3 temp_output_127_0_g262 = ( ( normalizeResult94_g262 * lerpResult301_g262 ) * temp_output_123_0_g262 );
-			float3 temp_output_2_0_g268 = ( appendResult89_g262 + ( temp_output_127_0_g262 * float3( 0.5,0.5,0.5 ) ) );
-			float temp_output_1_0_g268 = length( temp_output_2_0_g268 );
-			float temp_output_8_0_g268 = exp( ( 0.0 * ( 1.0 - temp_output_1_0_g268 ) ) );
-			float dotResult11_g268 = dot( _WorldSpaceLightPos0.xyz , temp_output_2_0_g268 );
-			float temp_output_9_0_g270 = ( 1.0 - ( dotResult11_g268 / temp_output_1_0_g268 ) );
-			float dotResult15_g268 = dot( ( normalizeResult94_g262 * lerpResult301_g262 ) , temp_output_2_0_g268 );
-			float temp_output_9_0_g269 = ( 1.0 - ( dotResult15_g268 / temp_output_1_0_g268 ) );
-			float clampResult27_g268 = clamp( ( ( exp( ( -1.0 * temp_output_45_0_g262 * 0.0001 ) ) * ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g266 * ( 0.0459 + ( temp_output_9_0_g266 * ( 3.83 + ( temp_output_9_0_g266 * ( -6.8 + ( temp_output_9_0_g266 * 5.25 ) ) ) ) ) ) ) ) ) ) ) + ( temp_output_8_0_g268 * ( ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g270 * ( 0.0459 + ( temp_output_9_0_g270 * ( 3.83 + ( temp_output_9_0_g270 * ( -6.8 + ( temp_output_9_0_g270 * 5.25 ) ) ) ) ) ) ) ) ) ) - ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g269 * ( 0.0459 + ( temp_output_9_0_g269 * ( 3.83 + ( temp_output_9_0_g269 * ( -6.8 + ( temp_output_9_0_g269 * 5.25 ) ) ) ) ) ) ) ) ) ) ) ) ) , 0.0 , 50.0 );
-			float3 temp_output_69_0_g262 = (_SkyTint).rgb;
-			float3 lerpResult72_g262 = lerp( ( float3(0.65,0.57,0.475) - float3(0.15,0.15,0.15) ) , ( float3(0.65,0.57,0.475) + float3(0.15,0.15,0.15) ) , ( 1.0 - temp_output_69_0_g262 ));
-			float3 temp_output_81_0_g262 = ( float3( 1,1,1 ) / pow( lerpResult72_g262 , 4.0 ) );
-			float lerpResult20_g262 = lerp( 0.0 , 0.0025 , pow( _AtmosphereThickness , 2.5 ));
-			float3 temp_output_2_0_g263 = ( temp_output_2_0_g268 + temp_output_127_0_g262 );
-			float temp_output_1_0_g263 = length( temp_output_2_0_g263 );
-			float temp_output_8_0_g263 = exp( ( temp_output_45_0_g262 * ( 1.0 - temp_output_1_0_g263 ) ) );
-			float dotResult11_g263 = dot( _WorldSpaceLightPos0.xyz , temp_output_2_0_g263 );
-			float temp_output_9_0_g265 = ( 1.0 - ( dotResult11_g263 / temp_output_1_0_g263 ) );
-			float dotResult15_g263 = dot( ( normalizeResult94_g262 * lerpResult301_g262 ) , temp_output_2_0_g263 );
-			float temp_output_9_0_g264 = ( 1.0 - ( dotResult15_g263 / temp_output_1_0_g263 ) );
-			float clampResult27_g263 = clamp( ( ( exp( ( -1.0 * temp_output_45_0_g262 * 0.0001 ) ) * ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g266 * ( 0.0459 + ( temp_output_9_0_g266 * ( 3.83 + ( temp_output_9_0_g266 * ( -6.8 + ( temp_output_9_0_g266 * 5.25 ) ) ) ) ) ) ) ) ) ) ) + ( temp_output_8_0_g263 * ( ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g265 * ( 0.0459 + ( temp_output_9_0_g265 * ( 3.83 + ( temp_output_9_0_g265 * ( -6.8 + ( temp_output_9_0_g265 * 5.25 ) ) ) ) ) ) ) ) ) ) - ( 0.25 * exp( ( -0.00287 + ( temp_output_9_0_g264 * ( 0.0459 + ( temp_output_9_0_g264 * ( 3.83 + ( temp_output_9_0_g264 * ( -6.8 + ( temp_output_9_0_g264 * 5.25 ) ) ) ) ) ) ) ) ) ) ) ) ) , 0.0 , 50.0 );
-			float3 temp_output_281_0_g262 = ( ( float3( 0,0,0 ) + ( exp( ( -1.0 * clampResult27_g268 * ( ( temp_output_81_0_g262 * ( ( lerpResult20_g262 * 4.0 ) * UNITY_PI ) ) + ( ( 0.001 * 4.0 ) * UNITY_PI ) ) ) ) * temp_output_8_0_g268 * ( temp_output_123_0_g262 * ( 1.0 / temp_output_37_0_g262 ) ) ) ) + ( exp( ( -1.0 * clampResult27_g263 * ( ( temp_output_81_0_g262 * ( ( lerpResult20_g262 * 4.0 ) * UNITY_PI ) ) + ( ( 0.001 * 4.0 ) * UNITY_PI ) ) ) ) * temp_output_8_0_g263 * ( temp_output_123_0_g262 * ( 1.0 / temp_output_37_0_g262 ) ) ) );
-			float3 temp_output_142_0_g262 = ( temp_output_281_0_g262 * ( temp_output_81_0_g262 * ( 20.0 * lerpResult20_g262 ) ) );
-			float dotResult7_g267 = dot( _WorldSpaceLightPos0.xyz , ( normalizeResult94_g262 * lerpResult301_g262 ) );
-			float3 normalizeResult193_g262 = normalize( ( ( normalizeResult94_g262 * lerpResult301_g262 ) * -1.0 ) );
-			float3 lerpResult198_g262 = lerp( ( _Exposure * ( temp_output_142_0_g262 * ( 0.75 + ( 0.75 * ( dotResult7_g267 * dotResult7_g267 ) ) ) ) ) , float3( 0,0,0 ) , saturate( ( normalizeResult193_g262.y / 0.02 ) ));
-			float3 temp_output_143_0_g262 = ( temp_output_281_0_g262 * ( 0.001 * 20.0 ) );
-			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
-			#else //aselc
-			float4 ase_lightColor = _LightColor0;
-			#endif //aselc
-			float clampResult174_g262 = clamp( ase_lightColor.a , 0.25 , 1.0 );
-			#if defined(_SUNDISK_NONE)
-				float3 staticSwitch172_g262 = float3( 0,0,0 );
-			#elif defined(_SUNDISK_SIMPLE)
-				float3 staticSwitch172_g262 = ( ( 27.0 * saturate( ( temp_output_143_0_g262 * ( 400.0 * 20.0 ) ) ) * ase_lightColor.rgb ) / clampResult174_g262 );
-			#elif defined(_SUNDISK_HIGHQUARITY)
-				float3 staticSwitch172_g262 = ( ( 15.0 * saturate( temp_output_143_0_g262 ) * ase_lightColor.rgb ) / clampResult174_g262 );
-			#else
-				float3 staticSwitch172_g262 = ( ( 15.0 * saturate( temp_output_143_0_g262 ) * ase_lightColor.rgb ) / clampResult174_g262 );
-			#endif
-			float3 temp_output_14_0_g271 = _WorldSpaceLightPos0.xyz;
-			float3 temp_output_224_0_g262 = ( normalizeResult94_g262 * 1.0 );
-			float3 temp_output_15_0_g271 = temp_output_224_0_g262;
-			float dotResult19_g271 = dot( temp_output_14_0_g271 , temp_output_15_0_g271 );
-			float temp_output_13_0_g271 = pow( saturate( dotResult19_g271 ) , _SunSizeConvergence );
-			float temp_output_21_0_g271 = _SunSize;
-			float temp_output_21_0_g272 = _SunSize;
-			float3 temp_output_14_0_g272 = _WorldSpaceLightPos0.xyz;
-			float3 temp_output_15_0_g272 = temp_output_224_0_g262;
-			float smoothstepResult10_g272 = smoothstep( temp_output_21_0_g272 , length( ( temp_output_14_0_g272 - temp_output_15_0_g272 ) ) , 0.0);
-			#if defined(_SUNDISK_NONE)
-				float staticSwitch222_g262 = 0.0;
-			#elif defined(_SUNDISK_SIMPLE)
-				float staticSwitch222_g262 = ( smoothstepResult10_g272 * smoothstepResult10_g272 );
-			#elif defined(_SUNDISK_HIGHQUARITY)
-				float staticSwitch222_g262 = ( ( 1.5 * ( ( 1.0 - 0.9801 ) / ( 2.0 + 0.9801 ) ) * ( 1.0 + ( temp_output_13_0_g271 * temp_output_13_0_g271 ) ) ) / max( pow( ( ( 1.0 + 0.9801 ) - ( 2.0 * -0.99 * ( temp_output_13_0_g271 * -1.0 ) ) ) , ( pow( temp_output_21_0_g271 , 0.65 ) * 10.0 ) ) , 0.0001 ) );
-			#else
-				float staticSwitch222_g262 = ( ( 1.5 * ( ( 1.0 - 0.9801 ) / ( 2.0 + 0.9801 ) ) * ( 1.0 + ( temp_output_13_0_g271 * temp_output_13_0_g271 ) ) ) / max( pow( ( ( 1.0 + 0.9801 ) - ( 2.0 * -0.99 * ( temp_output_13_0_g271 * -1.0 ) ) ) , ( pow( temp_output_21_0_g271 , 0.65 ) * 10.0 ) ) , 0.0001 ) );
-			#endif
-			float3 temp_output_204_0_g262 = ( lerpResult198_g262 + ( staticSwitch172_g262 * staticSwitch222_g262 ) );
-			#if defined(_SUNDISK_NONE)
-				float3 staticSwitch202_g262 = lerpResult198_g262;
-			#elif defined(_SUNDISK_SIMPLE)
-				float3 staticSwitch202_g262 = temp_output_204_0_g262;
-			#elif defined(_SUNDISK_HIGHQUARITY)
-				float3 staticSwitch202_g262 = temp_output_204_0_g262;
-			#else
-				float3 staticSwitch202_g262 = temp_output_204_0_g262;
-			#endif
-			float3 temp_output_106_226 = staticSwitch202_g262;
 			float fresnelNdotV95 = dot( _Vector1, ase_worldViewDir );
 			float fresnelNode95 = ( _FresnelBias + _FresnelScale * pow( 1.0 - fresnelNdotV95, _FresnelPower ) );
 			float dotResult116 = dot( temp_output_101_56 , ase_worldViewDir );
-			float3 lerpResult60 = lerp( ( (_Color2).rgb * dotResult71 * temp_output_106_226 * ( 1.0 + fresnelNode95 ) ) , temp_output_106_226 , saturate( ( ( normalizeResult94_g262.y / 0.02 ) + saturate( ( 1.0 - dotResult116 ) ) ) ));
-			o.Emission = lerpResult60;
+			float3 lerpResult60 = lerp( ( (_Color2).rgb * dotResult71 * temp_output_122_226 * ( 1.0 + fresnelNode95 ) ) , temp_output_122_226 , saturate( ( ( normalizeResult94_g284.y / 0.02 ) + saturate( ( 1.0 - dotResult116 ) ) ) ));
+			#ifdef _FAKESEA_ON
+				float3 staticSwitch120 = lerpResult60;
+			#else
+				float3 staticSwitch120 = temp_output_122_226;
+			#endif
+			o.Emission = staticSwitch120;
 			o.Alpha = 1;
 		}
 
@@ -247,36 +258,37 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 	CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
-Version=18909
-0;875;1985;1205;797.9688;22.73041;1;True;True
+Version=18910
+0;770;1750;1310;397.5997;-761.1334;1;True;True
 Node;AmplifyShaderEditor.ViewDirInputsCoordNode;62;-1440,608;Inherit;False;World;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.WorldSpaceCameraPos;61;-1440,464;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.SimpleDivideOpNode;66;-1088,640;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;84;-896,608;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;1,0,1;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;64;-896,448;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleSubtractOpNode;85;-704,448;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.RangedFloatNode;110;-1536,768;Inherit;False;Property;_WaterSurfaceProjectionScale;Water Surface Projection Scale;27;1;[Header];Create;True;1;Tweaks;0;0;False;1;Space;False;0.01;0.1;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;110;-1536,768;Inherit;False;Property;_WaterSurfaceProjectionScale;Water Surface Projection Scale;30;1;[Header];Create;True;1;Tweaks;0;0;False;1;Space;False;0.01;0.1;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.Vector3Node;65;-1152,816;Inherit;False;Constant;_Vector1;Vector 1;3;0;Create;True;0;0;0;False;0;False;0,1,0;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;111;-577.9688,716.2696;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.ViewDirInputsCoordNode;115;0,896;Inherit;False;World;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.FunctionNode;101;-512,448;Inherit;True;Procedual Water;8;;250;00be91958253a3048bc5d9152655524e;1,54,0;3;50;FLOAT3;0,0,0;False;53;FLOAT3;0,0,0;False;55;FLOAT3;0,0,0;False;6;FLOAT;58;FLOAT3;0;FLOAT3;47;FLOAT3;56;FLOAT;48;FLOAT;49
+Node;AmplifyShaderEditor.FunctionNode;101;-512,448;Inherit;True;Procedual Water;11;;250;00be91958253a3048bc5d9152655524e;1,54,0;3;50;FLOAT3;0,0,0;False;53;FLOAT3;0,0,0;False;55;FLOAT3;0,0,0;False;6;FLOAT;58;FLOAT3;0;FLOAT3;47;FLOAT3;56;FLOAT;48;FLOAT;49
 Node;AmplifyShaderEditor.DotProductOpNode;116;256,768;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;108;-749.7612,1095.498;Inherit;False;Property;_FresnelScale;Fresnel Scale;28;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.OneMinusNode;118;569.0313,793.2696;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;108;-749.7612,1095.498;Inherit;False;Property;_FresnelScale;Fresnel Scale;25;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;109;-839.7612,1189.498;Inherit;False;Property;_FresnelPower;Fresnel Power;26;0;Create;True;0;0;0;False;0;False;5;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;107;-896,1024;Inherit;False;Property;_FresnelBias;Fresnel Bias;24;1;[Header];Create;True;1;Fresnel;0;0;False;1;Space;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;107;-896,1024;Inherit;False;Property;_FresnelBias;Fresnel Bias;27;1;[Header];Create;True;1;Fresnel;0;0;False;1;Space;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;109;-839.7612,1189.498;Inherit;False;Property;_FresnelPower;Fresnel Power;29;0;Create;True;0;0;0;False;0;False;5;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.WorldSpaceLightDirHlpNode;72;-416,704;Inherit;False;False;1;0;FLOAT;0;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.FresnelNode;95;-512,864;Inherit;False;Standard;WorldNormal;ViewDir;False;False;5;0;FLOAT3;0,0,1;False;4;FLOAT3;0,0,0;False;1;FLOAT;0;False;2;FLOAT;1;False;3;FLOAT;5;False;1;FLOAT;0
-Node;AmplifyShaderEditor.FunctionNode;106;-634,66.5;Inherit;True;Procedual Sky;0;;262;63a55d02f8c6d5240aba01baae35afb3;0;0;4;FLOAT;282;FLOAT3;226;FLOAT3;276;FLOAT;236
 Node;AmplifyShaderEditor.SaturateNode;119;811.0313,817.2696;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;122;-634,66.5;Inherit;True;Procedual Sky;0;;284;63a55d02f8c6d5240aba01baae35afb3;0;0;4;FLOAT;282;FLOAT3;226;FLOAT3;276;FLOAT;236
 Node;AmplifyShaderEditor.DotProductOpNode;71;0,512;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;96;0,672;Inherit;False;2;2;0;FLOAT;1;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;117;-100.9688,368.2696;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SaturateNode;105;128,256;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleMultiplyOpNode;73;352.0645,326.2795;Inherit;False;4;4;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.LerpOp;60;544,192;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;73;401.0645,454.2795;Inherit;False;4;4;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.LerpOp;60;624,249;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.StaticSwitch;120;779.5313,135.7696;Inherit;False;Property;_FakeSea;Fake Sea;10;0;Create;True;0;0;0;False;0;False;0;1;0;True;;Toggle;2;Key0;Key1;Create;False;True;9;1;FLOAT3;0,0,0;False;0;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;4;FLOAT3;0,0,0;False;5;FLOAT3;0,0,0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.RangedFloatNode;100;-450.5951,373.9434;Inherit;False;Constant;_Float1;Float 1;3;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;768,0;Float;False;True;-1;2;ASEMaterialInspector;0;0;Unlit;EsnyaShaders/ProcedualSeaSky;False;False;False;False;True;True;True;True;True;True;True;True;False;True;True;True;False;True;False;False;False;Off;2;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Custom;0.5;True;False;0;True;Background;;Background;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;False;0;0;False;-1;0;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;28;-1;-1;-1;1;PreviewType=Skybox;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;1059,83;Float;False;True;-1;2;ASEMaterialInspector;0;0;Unlit;EsnyaShaders/ProcedualSeaSky;False;False;False;False;True;True;True;True;True;True;True;True;False;True;True;True;False;True;False;False;False;Off;2;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Custom;0.5;True;False;0;True;Background;;Background;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;False;0;0;False;-1;0;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;31;-1;-1;-1;1;PreviewType=Skybox;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;66;0;61;2
 WireConnection;66;1;62;2
 WireConnection;84;0;61;0
@@ -300,16 +312,18 @@ WireConnection;119;0;118;0
 WireConnection;71;0;101;56
 WireConnection;71;1;72;0
 WireConnection;96;1;95;0
-WireConnection;117;0;106;236
+WireConnection;117;0;122;236
 WireConnection;117;1;119;0
 WireConnection;105;0;117;0
 WireConnection;73;0;101;0
 WireConnection;73;1;71;0
-WireConnection;73;2;106;226
+WireConnection;73;2;122;226
 WireConnection;73;3;96;0
 WireConnection;60;0;73;0
-WireConnection;60;1;106;226
+WireConnection;60;1;122;226
 WireConnection;60;2;105;0
-WireConnection;0;2;60;0
+WireConnection;120;1;122;226
+WireConnection;120;0;60;0
+WireConnection;0;2;120;0
 ASEEND*/
-//CHKSM=FAC9B2DA7E0874FCBCD106F128B2CEA13F1C1D42
+//CHKSM=0378D7C4C97698E0D47BC0747E050638B870E865

@@ -25,12 +25,12 @@ Shader "EsnyaShaders/ProcedualWater"
 	SubShader
 	{
 		Tags{ "RenderType" = "Transparent"  "Queue" = "Transparent+0" "IgnoreProjector" = "True" "ForceNoShadowCasting" = "True" }
-		Cull Back
+		Cull Off
 		CGPROGRAM
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#pragma target 3.0
-		#pragma surface surf Standard alpha:fade keepalpha novertexlights nolightmap  nodirlightmap nometa noforwardadd vertex:vertexDataFunc 
+		#pragma surface surf Standard alpha:fade keepalpha novertexlights nolightmap  nodirlightmap noforwardadd vertex:vertexDataFunc 
 		struct Input
 		{
 			float3 worldPos;
@@ -160,13 +160,13 @@ Shader "EsnyaShaders/ProcedualWater"
 	CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
-Version=18909
-1203;598;2456;1350;-2983.768;465.2408;1;True;True
+Version=18910
+1103;612;2456;1350;-2983.768;462.2408;1;True;True
 Node;AmplifyShaderEditor.FunctionNode;109;3982.651,49.98707;Inherit;False;Procedual Water;0;;3;00be91958253a3048bc5d9152655524e;1,54,1;3;50;FLOAT3;0,0,0;False;53;FLOAT3;0,0,0;False;55;FLOAT3;0,0,0;False;6;FLOAT;58;FLOAT3;0;FLOAT3;47;FLOAT3;56;FLOAT;48;FLOAT;49
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;4595.806,-221.1395;Float;False;True;-1;2;ASEMaterialInspector;0;0;Standard;EsnyaShaders/ProcedualWater;False;False;False;False;False;True;True;False;True;False;True;True;False;False;True;True;False;False;False;False;False;Back;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Transparent;0.5;True;False;0;False;Transparent;;Transparent;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;2;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;4595.806,-221.1395;Float;False;True;-1;2;ASEMaterialInspector;0;0;Standard;EsnyaShaders/ProcedualWater;False;False;False;False;False;True;True;False;True;False;False;True;False;False;True;True;False;False;False;False;False;Off;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Transparent;0.5;True;False;0;False;Transparent;;Transparent;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;2;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;0;0;109;0
 WireConnection;0;1;109;47
 WireConnection;0;4;109;48
 WireConnection;0;9;109;49
 ASEEND*/
-//CHKSM=C192A47629710634ABBA4C37135B525EA7502E43
+//CHKSM=BA912F2E1D1E1B6FB9564636CE906C40EA3DABC5
