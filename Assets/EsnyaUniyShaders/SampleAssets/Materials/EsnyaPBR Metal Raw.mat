@@ -7,22 +7,26 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: EsnyaPBR Transmission
-  m_Shader: {fileID: 4800000, guid: 8f58c05bf7ba62f43a6fcd2bdfd6f34a, type: 3}
-  m_ShaderKeywords: _NORMALMAP _PARALLAXMAP
-  m_LightmapFlags: 0
+  m_Name: EsnyaPBR Metal Raw
+  m_Shader: {fileID: 4800000, guid: 9f978d0de68029a42a27ffe3c36cb863, type: 3}
+  m_ShaderKeywords: _GeometricSpecularAA _NORMALMAP _SPECGLOSSMAP _ZWRITE_ON
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 2000
   stringTagMap:
-    QUEUE: 0
+    QUEUE: 3000
     RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 19c67ebcab9f0314caeb952ba7f4edaa, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6e77c8d96aee90f499fb612b3161a35f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedo:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -46,10 +50,14 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 6ee50450d1679b741b481189bc8b671c, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1dcdb4a065c48f040aae6e3391622045, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
+        m_Texture: {fileID: 2800000, guid: cc9490a4df544774bbfdfadeffd377d4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMapS:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -58,7 +66,15 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
-        m_Texture: {fileID: 2800000, guid: 7b36838a401b4464fa88672ba4008017, type: 3}
+        m_Texture: {fileID: 2800000, guid: 1606a6ff7cf043a4e8e60eb7fc24b6ed, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMapS:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMapS1:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _RefractionMap:
@@ -66,7 +82,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: d7125bcf31b29e94f86a51d36f3f5025, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TranslucencyMap:
@@ -74,7 +90,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _TransmissionMap:
-        m_Texture: {fileID: 2800000, guid: 22277ef97dc07ac46bb148fee0303abb, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -89,8 +105,6 @@ Material:
     - _AlphaBlend: 0
     - _AlphaTest: 0
     - _AlphaTest1: 0
-    - _BlendMode: 0
-    - _BlendMode1: 0
     - _BumpScale: 1
     - _ChromaticAberration: 0.1
     - _CullMode: 2
@@ -99,31 +113,34 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EMISSION: 0
-    - _GeometricSpecularAA: 0
-    - _GeometricSpecularAA1: 0
-    - _Glossiness: 1
+    - _GeometricSpecularAA: 1
+    - _GeometricSpecularAA1: 1
+    - _GlossMapScale: 1
+    - _Glossiness: 0
     - _GlossinessCorrection: 0.45
+    - _GlossyReflections: 1
     - _Keyword0: 0
     - _METALLICGLOSSMAP: 0
     - _METALLICGLOSSMAP2: 0
-    - _MaskMapMode: 0
-    - _Metallic: 0
+    - _Metallic: 1
     - _Mode: 0
     - _NORMALMAP: 1
     - _NORMALMAP_INVERT_Y: 0
     - _NeagteNormalG: 0
-    - _NormalMapInvert: 0
     - _OcclusionStrength: 1
     - _PACKEDMASK_METALLICGLOSSMAP: 0
     - _PACKEDMASK_SPECGLOSSMAP: 0
-    - _PARALLAXMAP: 1
+    - _PARALLAXMAP: 0
     - _PackedMask: 0
     - _Parallax: 0.005
     - _RefractionStrength: 1
-    - _RoughnessCorrection: 0.45
-    - _RoughnessSmoothnessCorrection: 0.45
-    - _SPECGLOSSMAP: 0
+    - _RoughnessCorrection: 1
+    - _RoughnessSmoothnessCorrection: 1
+    - _RougnessCorrection: 0.45
+    - _SPECGLOSSMAP: 1
+    - _SmoothnessCorrection: 1
     - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _TransAmbient: 0.2
     - _TransDirect: 1
@@ -131,15 +148,18 @@ Material:
     - _TransScattering: 2
     - _TransShadow: 0.9
     - _Translucency: 1
+    - _UVSec: 0
     - _UVSetforsecondarytextures: 0
     - _ZShift: 0
     - _ZShiftScale: 0.005
     - _ZWrite: 1
     - __dirty: 0
     - __dst: 0
+    - __mode: 0
     - __src: 1
+    - __zw: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 0}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _TranslucencyColor: {r: 0, g: 0, b: 0, a: 0}
-    - _TransmissionColor: {r: 1, g: 0.93736005, b: 0.4009434, a: 0}
+    - _TransmissionColor: {r: 0, g: 0, b: 0, a: 0}

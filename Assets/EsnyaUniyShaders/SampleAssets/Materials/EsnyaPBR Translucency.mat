@@ -10,11 +10,13 @@ Material:
   m_Name: EsnyaPBR Translucency
   m_Shader: {fileID: 4800000, guid: 8f58c05bf7ba62f43a6fcd2bdfd6f34a, type: 3}
   m_ShaderKeywords: _NORMALMAP _PARALLAXMAP
-  m_LightmapFlags: 0
+  m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
+  stringTagMap:
+    QUEUE: 0
+    RenderType: Opaque
   disabledShaderPasses: []
   m_SavedProperties:
     serializedVersion: 3
@@ -84,6 +86,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AlphaBlend: 0
+    - _AlphaTest: 0
+    - _AlphaTest1: 0
+    - _BlendMode: 0
+    - _BlendMode1: 0
     - _BumpScale: 1
     - _ChromaticAberration: 0.04
     - _CullMode: 2
@@ -92,19 +99,32 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _EMISSION: 0
+    - _GeometricSpecularAA: 0
     - _GeometricSpecularAA1: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.2
+    - _GlossinessCorrection: 0.45
     - _GlossyReflections: 1
+    - _Keyword0: 0
+    - _METALLICGLOSSMAP: 0
+    - _METALLICGLOSSMAP2: 0
+    - _MaskMapMode: 0
     - _Metallic: 0
-    - _Mode: 2
+    - _Mode: 0
     - _NORMALMAP: 1
+    - _NORMALMAP_INVERT_Y: 0
     - _NeagteNormalG: 0
+    - _NormalMapInvert: 0
     - _OcclusionStrength: 1
+    - _PACKEDMASK_METALLICGLOSSMAP: 0
+    - _PACKEDMASK_SPECGLOSSMAP: 0
     - _PARALLAXMAP: 1
+    - _PackedMask: 0
     - _Parallax: 0.005
     - _RefractionStrength: 1.1
     - _RoughnessCorrection: 0.45
+    - _RoughnessSmoothnessCorrection: 0.45
+    - _SPECGLOSSMAP: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -120,6 +140,8 @@ Material:
     - _ZShiftScale: 0.005
     - _ZWrite: 1
     - __dirty: 0
+    - __dst: 0
+    - __src: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
