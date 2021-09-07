@@ -19,6 +19,9 @@ Shader "EsnyaShaders/ProcedualWater"
 		_Wave2Speed("Wave 2 Speed", Float) = 0.8
 		_Wave2Scale("Wave 2 Scale", Float) = 0.3
 		_Wave2Strength("Wave 2 Strength", Float) = 0.5
+		_ClippingFadeCurve("Clipping Fade Curve", Float) = 2
+		_ClippingFadeEnd("Clipping Fade End", Range( 0 , 1)) = 1
+		_ClippingFadeStart("Clipping Fade Start", Range( 0 , 1)) = 0
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
@@ -37,6 +40,7 @@ Shader "EsnyaShaders/ProcedualWater"
 			float3 worldNormal;
 			INTERNAL_DATA
 			float4 screenPosition34_g3;
+			float eyeDepth;
 		};
 
 		uniform float2 _Wave1Direction;
@@ -56,6 +60,9 @@ Shader "EsnyaShaders/ProcedualWater"
 		UNITY_DECLARE_DEPTH_TEXTURE( _CameraDepthTexture );
 		uniform float4 _CameraDepthTexture_TexelSize;
 		uniform float _Smoothness;
+		uniform float _ClippingFadeEnd;
+		uniform float _ClippingFadeStart;
+		uniform float _ClippingFadeCurve;
 
 
 		float3 mod2D289( float3 x ) { return x - floor( x * ( 1.0 / 289.0 ) ) * 289.0; }
@@ -113,6 +120,7 @@ Shader "EsnyaShaders/ProcedualWater"
 			float3 vertexPos34_g3 = ase_vertex3Pos;
 			float4 ase_screenPos34_g3 = ComputeScreenPos( UnityObjectToClipPos( vertexPos34_g3 ) );
 			o.screenPosition34_g3 = ase_screenPos34_g3;
+			o.eyeDepth = -UnityObjectToViewPos( v.vertex.xyz ).z;
 		}
 
 		void surf( Input i , inout SurfaceOutputStandard o )
@@ -149,9 +157,14 @@ Shader "EsnyaShaders/ProcedualWater"
 			float screenDepth34_g3 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE( _CameraDepthTexture, ase_screenPosNorm34.xy ));
 			float distanceDepth34_g3 = saturate( abs( ( screenDepth34_g3 - LinearEyeDepth( ase_screenPosNorm34.z ) ) / ( 10.0 ) ) );
 			float4 lerpResult40_g3 = lerp( _Color , _Color2 , distanceDepth34_g3);
-			o.Albedo = (lerpResult40_g3).rgb;
-			o.Smoothness = _Smoothness;
-			o.Alpha = lerpResult40_g3.a;
+			float3 temp_output_109_0 = (lerpResult40_g3).rgb;
+			o.Albedo = temp_output_109_0;
+			float temp_output_109_48 = _Smoothness;
+			o.Smoothness = temp_output_109_48;
+			float cameraDepthFade110 = (( i.eyeDepth -_ProjectionParams.y - ( _ProjectionParams.z * _ClippingFadeStart ) ) / ( _ProjectionParams.z * _ClippingFadeEnd * ( 1.0 - _ClippingFadeStart ) ));
+			float temp_output_125_0 = pow( saturate( cameraDepthFade110 ) , _ClippingFadeCurve );
+			float lerpResult139 = lerp( lerpResult40_g3.a , 0.0 , temp_output_125_0);
+			o.Alpha = lerpResult139;
 		}
 
 		ENDCG
@@ -160,13 +173,53 @@ Shader "EsnyaShaders/ProcedualWater"
 	CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
-Version=18910
-1103;612;2456;1350;-2983.768;462.2408;1;True;True
-Node;AmplifyShaderEditor.FunctionNode;109;3982.651,49.98707;Inherit;False;Procedual Water;0;;3;00be91958253a3048bc5d9152655524e;1,54,1;3;50;FLOAT3;0,0,0;False;53;FLOAT3;0,0,0;False;55;FLOAT3;0,0,0;False;6;FLOAT;58;FLOAT3;0;FLOAT3;47;FLOAT3;56;FLOAT;48;FLOAT;49
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;4595.806,-221.1395;Float;False;True;-1;2;ASEMaterialInspector;0;0;Standard;EsnyaShaders/ProcedualWater;False;False;False;False;False;True;True;False;True;False;False;True;False;False;True;True;False;False;False;False;False;Off;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Transparent;0.5;True;False;0;False;Transparent;;Transparent;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;2;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Version=18912
+1004;897;1920;1006;-2520.961;-101.2745;1;True;True
+Node;AmplifyShaderEditor.RangedFloatNode;118;3130,453;Inherit;False;Property;_ClippingFadeStart;Clipping Fade Start;18;0;Create;True;0;0;0;False;0;False;0;0.5;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.OneMinusNode;123;3459,177;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.ProjectionParams;119;3072,256;Inherit;False;0;5;FLOAT4;0;FLOAT;1;FLOAT;2;FLOAT;3;FLOAT;4
+Node;AmplifyShaderEditor.RangedFloatNode;117;3200,0;Inherit;False;Property;_ClippingFadeEnd;Clipping Fade End;17;0;Create;True;0;0;0;False;0;False;1;1;0;1;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;120;3704.768,130.7592;Inherit;False;3;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;121;3681.768,254.7592;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.CameraDepthFade;110;3840,128;Inherit;False;3;2;FLOAT3;0,0,0;False;0;FLOAT;6000;False;1;FLOAT;3000;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SaturateNode;116;4091,296;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;126;3974.768,513.7592;Inherit;False;Property;_ClippingFadeCurve;Clipping Fade Curve;16;0;Create;True;0;0;0;False;0;False;2;1.2;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;109;3761.651,-173.0129;Inherit;False;Procedual Water;0;;3;00be91958253a3048bc5d9152655524e;1,54,1;3;50;FLOAT3;0,0,0;False;53;FLOAT3;0,0,0;False;55;FLOAT3;0,0,0;False;6;FLOAT;58;FLOAT3;0;FLOAT3;47;FLOAT3;56;FLOAT;48;FLOAT;49
+Node;AmplifyShaderEditor.PowerNode;125;4270.768,474.7592;Inherit;False;False;2;0;FLOAT;0;False;1;FLOAT;1;False;1;FLOAT;0
+Node;AmplifyShaderEditor.ViewDirInputsCoordNode;135;3984.961,110.2745;Inherit;False;World;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.LerpOp;127;4826.768,-142.2408;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;1,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.CustomExpressionNode;134;4325,146;Inherit;False;UNITY_SAMPLE_TEXCUBE(unity_SpecCube0, worldReflection)@;4;Create;1;True;worldReflection;FLOAT3;0,0,0;In;;Inherit;False;SpecCube0;True;False;0;;False;1;0;FLOAT3;0,0,0;False;1;FLOAT4;0
+Node;AmplifyShaderEditor.ComponentMaskNode;137;4511.961,-109.7255;Inherit;False;True;True;True;False;1;0;FLOAT4;0,0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.LerpOp;138;4827.961,-257.7255;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.LerpOp;139;4878.961,144.2745;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.NegateNode;136;4234.961,213.2745;Inherit;False;1;0;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.LerpOp;140;4880.961,-41.72552;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;5110.806,-149.1395;Float;False;True;-1;2;ASEMaterialInspector;0;0;Standard;EsnyaShaders/ProcedualWater;False;False;False;False;False;True;True;False;True;False;False;True;False;False;True;True;False;False;False;False;False;Off;0;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Transparent;0.5;True;False;0;False;Transparent;;Transparent;All;18;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;2;5;False;-1;10;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;-1;-1;-1;-1;0;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+WireConnection;123;0;118;0
+WireConnection;120;0;119;3
+WireConnection;120;1;117;0
+WireConnection;120;2;123;0
+WireConnection;121;0;119;3
+WireConnection;121;1;118;0
+WireConnection;110;0;120;0
+WireConnection;110;1;121;0
+WireConnection;116;0;110;0
+WireConnection;125;0;116;0
+WireConnection;125;1;126;0
+WireConnection;127;1;137;0
+WireConnection;127;2;125;0
+WireConnection;134;0;136;0
+WireConnection;137;0;134;0
+WireConnection;138;0;109;0
+WireConnection;138;2;125;0
+WireConnection;139;0;109;49
+WireConnection;139;2;125;0
+WireConnection;136;0;135;0
+WireConnection;140;0;109;48
+WireConnection;140;2;125;0
 WireConnection;0;0;109;0
 WireConnection;0;1;109;47
 WireConnection;0;4;109;48
-WireConnection;0;9;109;49
+WireConnection;0;9;139;0
 ASEEND*/
-//CHKSM=BA912F2E1D1E1B6FB9564636CE906C40EA3DABC5
+//CHKSM=B4D59ECDAF7CCD30DA866D12D67A22D5A16ABD32

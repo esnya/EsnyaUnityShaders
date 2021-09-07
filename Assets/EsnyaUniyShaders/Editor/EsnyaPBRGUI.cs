@@ -312,37 +312,8 @@ namespace EsnyaFactory {
             Header("Other Options");
             ShaderPropertyField(materialEditor, dict, "_ZWrite", "Z Write");
             ShaderPropertyField(materialEditor, dict, "_CullMode", "Cull Mode");
+            materialEditor.LightmapEmissionProperty();
             materialEditor.RenderQueueField();
-/*
-            foreach (var prop in props)
-            {
-                if (HiddenPropertyNames.Contains(prop.name)) continue;
-
-                if (prop.name == "_Cutoff")
-                {
-                }
-                else
-                {
-                    switch (prop.type)
-                    {
-                        case MaterialProperty.PropType.Texture:
-                            MaterialProperty colorProperty;
-                            if (dict.TryGetValue(GetColorPropertyName(prop.name), out colorProperty))
-                            {
-                                materialEditor.TexturePropertySingleLine(new GUIContent(prop.displayName), prop, colorProperty);
-                            }
-                            else
-                            {
-                                materialEditor.TexturePropertySingleLine(new GUIContent(prop.displayName), prop);
-                            }
-                            break;
-                        default:
-                            materialEditor.ShaderProperty(prop, prop.displayName);
-                            break;
-                    }
-                }
-            }*/
-
         }
     }
 }

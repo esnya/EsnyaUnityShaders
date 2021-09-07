@@ -12,6 +12,7 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 		_SkyTint("Sky Tint", Color) = (0.5,0.5,0.5,1)
 		[KeywordEnum(None,Simple,HighQuarity)] _SunDisk("Sun", Float) = 2
 		_Exposure("Exposure", Range( 0 , 8)) = 1.3
+		_GroundEmissionIntensity("Ground Emission Intensity", Range( 0 , 1)) = 1
 		[Toggle(_FAKESEA_ON)] _FakeSea("Fake Sea", Float) = 1
 		_Color2("Deep Color", Color) = (0.05098039,0.2196078,0.3764706,1)
 		_WaveStrength("Wave Strength", Float) = 1
@@ -58,7 +59,7 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 		uniform float _AtmosphereAttenuationBias;
 		uniform float _SunSizeConvergence;
 		uniform float _SunSize;
-		uniform float4 _Color2;
+		uniform float _GroundEmissionIntensity;
 		uniform float _WaterSurfaceProjectionScale;
 		uniform float2 _Wave1Direction;
 		uniform float _Wave1Speed;
@@ -72,6 +73,7 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 		uniform float _Wave2Curve;
 		uniform float _WaveStrength;
 		uniform float _WaveDistanceAttenuation;
+		uniform float4 _Color2;
 		uniform float _FresnelBias;
 		uniform float _FresnelScale;
 		uniform float _FresnelPower;
@@ -234,6 +236,10 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 			float scale61_g250 = temp_output_42_0_g250;
 			float3 localPerturbNormal61_g250 = PerturbNormal61_g250( surf_pos61_g250 , surf_norm61_g250 , height61_g250 , scale61_g250 );
 			float3 temp_output_101_56 = localPerturbNormal61_g250;
+			float dotResult116 = dot( temp_output_101_56 , ase_worldViewDir );
+			float temp_output_105_0 = saturate( ( ( normalizeResult94_g284.y / 0.02 ) + saturate( ( 1.0 - dotResult116 ) ) ) );
+			float lerpResult125 = lerp( _GroundEmissionIntensity , 1.0 , temp_output_105_0);
+			float3 temp_output_124_0 = ( temp_output_122_226 * lerpResult125 );
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
 			float3 ase_worldlightDir = 0;
 			#else //aseld
@@ -242,12 +248,11 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 			float dotResult71 = dot( temp_output_101_56 , ase_worldlightDir );
 			float fresnelNdotV95 = dot( _Vector1, ase_worldViewDir );
 			float fresnelNode95 = ( _FresnelBias + _FresnelScale * pow( 1.0 - fresnelNdotV95, _FresnelPower ) );
-			float dotResult116 = dot( temp_output_101_56 , ase_worldViewDir );
-			float3 lerpResult60 = lerp( ( (_Color2).rgb * dotResult71 * temp_output_122_226 * ( 1.0 + fresnelNode95 ) ) , temp_output_122_226 , saturate( ( ( normalizeResult94_g284.y / 0.02 ) + saturate( ( 1.0 - dotResult116 ) ) ) ));
+			float3 lerpResult60 = lerp( ( (_Color2).rgb * dotResult71 * temp_output_122_226 * ( 1.0 + fresnelNode95 ) ) , temp_output_124_0 , temp_output_105_0);
 			#ifdef _FAKESEA_ON
 				float3 staticSwitch120 = lerpResult60;
 			#else
-				float3 staticSwitch120 = temp_output_122_226;
+				float3 staticSwitch120 = temp_output_124_0;
 			#endif
 			o.Emission = staticSwitch120;
 			o.Alpha = 1;
@@ -258,37 +263,41 @@ Shader "EsnyaShaders/ProcedualSeaSky"
 	CustomEditor "ASEMaterialInspector"
 }
 /*ASEBEGIN
-Version=18910
-0;770;1750;1310;397.5997;-761.1334;1;True;True
+Version=18912
+970;875;1920;1006;1541.593;556.6791;1.505756;True;True
 Node;AmplifyShaderEditor.ViewDirInputsCoordNode;62;-1440,608;Inherit;False;World;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.WorldSpaceCameraPos;61;-1440,464;Inherit;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.SimpleDivideOpNode;66;-1088,640;Inherit;False;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;84;-896,608;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT3;1,0,1;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;64;-896,448;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.SimpleSubtractOpNode;85;-704,448;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.RangedFloatNode;110;-1536,768;Inherit;False;Property;_WaterSurfaceProjectionScale;Water Surface Projection Scale;30;1;[Header];Create;True;1;Tweaks;0;0;False;1;Space;False;0.01;0.1;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.Vector3Node;65;-1152,816;Inherit;False;Constant;_Vector1;Vector 1;3;0;Create;True;0;0;0;False;0;False;0,1,0;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.RangedFloatNode;110;-1536,768;Inherit;False;Property;_WaterSurfaceProjectionScale;Water Surface Projection Scale;31;1;[Header];Create;True;1;Tweaks;0;0;False;1;Space;False;0.01;0.001;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;111;-577.9688,716.2696;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.Vector3Node;65;-1152,816;Inherit;False;Constant;_Vector1;Vector 1;3;0;Create;True;0;0;0;False;0;False;0,1,0;0,0,0;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
+Node;AmplifyShaderEditor.FunctionNode;101;-512,448;Inherit;True;Procedual Water;12;;250;00be91958253a3048bc5d9152655524e;1,54,0;3;50;FLOAT3;0,0,0;False;53;FLOAT3;0,0,0;False;55;FLOAT3;0,0,0;False;6;FLOAT;58;FLOAT3;0;FLOAT3;47;FLOAT3;56;FLOAT;48;FLOAT;49
 Node;AmplifyShaderEditor.ViewDirInputsCoordNode;115;0,896;Inherit;False;World;False;0;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
-Node;AmplifyShaderEditor.FunctionNode;101;-512,448;Inherit;True;Procedual Water;11;;250;00be91958253a3048bc5d9152655524e;1,54,0;3;50;FLOAT3;0,0,0;False;53;FLOAT3;0,0,0;False;55;FLOAT3;0,0,0;False;6;FLOAT;58;FLOAT3;0;FLOAT3;47;FLOAT3;56;FLOAT;48;FLOAT;49
 Node;AmplifyShaderEditor.DotProductOpNode;116;256,768;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;108;-749.7612,1095.498;Inherit;False;Property;_FresnelScale;Fresnel Scale;28;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.OneMinusNode;118;569.0313,793.2696;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;107;-896,1024;Inherit;False;Property;_FresnelBias;Fresnel Bias;27;1;[Header];Create;True;1;Fresnel;0;0;False;1;Space;False;0;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.RangedFloatNode;109;-839.7612,1189.498;Inherit;False;Property;_FresnelPower;Fresnel Power;29;0;Create;True;0;0;0;False;0;False;5;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.FunctionNode;122;-630.9885,-126.2367;Inherit;True;Procedual Sky;0;;284;63a55d02f8c6d5240aba01baae35afb3;0;0;4;FLOAT;282;FLOAT3;226;FLOAT3;276;FLOAT;236
+Node;AmplifyShaderEditor.SaturateNode;119;811.0313,817.2696;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.SimpleAddOpNode;117;-76.96881,270.2696;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;107;-896,1024;Inherit;False;Property;_FresnelBias;Fresnel Bias;28;1;[Header];Create;True;1;Fresnel;0;0;False;1;Space;False;0;0;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;109;-839.7612,1189.498;Inherit;False;Property;_FresnelPower;Fresnel Power;30;0;Create;True;0;0;0;False;0;False;5;5;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;108;-749.7612,1095.498;Inherit;False;Property;_FresnelScale;Fresnel Scale;29;0;Create;True;0;0;0;False;0;False;1;10.34;0;0;0;1;FLOAT;0
+Node;AmplifyShaderEditor.SaturateNode;105;128,256;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;123;27.68567,27.96124;Inherit;False;Property;_GroundEmissionIntensity;Ground Emission Intensity;10;0;Create;True;0;0;0;False;0;False;1;0.5;0;1;0;1;FLOAT;0
 Node;AmplifyShaderEditor.WorldSpaceLightDirHlpNode;72;-416,704;Inherit;False;False;1;0;FLOAT;0;False;4;FLOAT3;0;FLOAT;1;FLOAT;2;FLOAT;3
 Node;AmplifyShaderEditor.FresnelNode;95;-512,864;Inherit;False;Standard;WorldNormal;ViewDir;False;False;5;0;FLOAT3;0,0,1;False;4;FLOAT3;0,0,0;False;1;FLOAT;0;False;2;FLOAT;1;False;3;FLOAT;5;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SaturateNode;119;811.0313,817.2696;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.FunctionNode;122;-634,66.5;Inherit;True;Procedual Sky;0;;284;63a55d02f8c6d5240aba01baae35afb3;0;0;4;FLOAT;282;FLOAT3;226;FLOAT3;276;FLOAT;236
-Node;AmplifyShaderEditor.DotProductOpNode;71;0,512;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.RangedFloatNode;126;37.68573,-44.03876;Inherit;False;Constant;_Float2;Float 2;9;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleAddOpNode;96;0,672;Inherit;False;2;2;0;FLOAT;1;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SimpleAddOpNode;117;-100.9688,368.2696;Inherit;False;2;2;0;FLOAT;0;False;1;FLOAT;0;False;1;FLOAT;0
-Node;AmplifyShaderEditor.SaturateNode;105;128,256;Inherit;False;1;0;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.LerpOp;125;334.6857,-13.03876;Inherit;False;3;0;FLOAT;0;False;1;FLOAT;0;False;2;FLOAT;0;False;1;FLOAT;0
+Node;AmplifyShaderEditor.DotProductOpNode;71;0,512;Inherit;False;2;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;1;FLOAT;0
 Node;AmplifyShaderEditor.SimpleMultiplyOpNode;73;401.0645,454.2795;Inherit;False;4;4;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.SimpleMultiplyOpNode;124;469.6857,88.96124;Inherit;False;2;2;0;FLOAT3;0,0,0;False;1;FLOAT;0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.LerpOp;60;624,249;Inherit;False;3;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT;0;False;1;FLOAT3;0
-Node;AmplifyShaderEditor.StaticSwitch;120;779.5313,135.7696;Inherit;False;Property;_FakeSea;Fake Sea;10;0;Create;True;0;0;0;False;0;False;0;1;0;True;;Toggle;2;Key0;Key1;Create;False;True;9;1;FLOAT3;0,0,0;False;0;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;4;FLOAT3;0,0,0;False;5;FLOAT3;0,0,0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT3;0,0,0;False;1;FLOAT3;0
 Node;AmplifyShaderEditor.RangedFloatNode;100;-450.5951,373.9434;Inherit;False;Constant;_Float1;Float 1;3;0;Create;True;0;0;0;False;0;False;1;0;0;0;0;1;FLOAT;0
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;1059,83;Float;False;True;-1;2;ASEMaterialInspector;0;0;Unlit;EsnyaShaders/ProcedualSeaSky;False;False;False;False;True;True;True;True;True;True;True;True;False;True;True;True;False;True;False;False;False;Off;2;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Custom;0.5;True;False;0;True;Background;;Background;All;14;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;False;0;0;False;-1;0;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;31;-1;-1;-1;1;PreviewType=Skybox;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.StaticSwitch;120;906.5313,96.76961;Inherit;False;Property;_FakeSea;Fake Sea;11;0;Create;True;0;0;0;False;0;False;0;1;0;True;;Toggle;2;Key0;Key1;Create;False;True;9;1;FLOAT3;0,0,0;False;0;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT3;0,0,0;False;4;FLOAT3;0,0,0;False;5;FLOAT3;0,0,0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT3;0,0,0;False;1;FLOAT3;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;1303.8,75.00002;Float;False;True;-1;2;ASEMaterialInspector;0;0;Unlit;EsnyaShaders/ProcedualSeaSky;False;False;False;False;True;True;True;True;True;True;True;True;False;True;True;True;False;True;False;False;False;Off;2;False;-1;0;False;-1;False;0;False;-1;0;False;-1;False;0;Custom;0.5;True;False;0;True;Background;;Background;All;18;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;False;0;0;False;-1;0;False;-1;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;32;-1;-1;-1;1;PreviewType=Skybox;False;0;0;False;-1;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;15;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;66;0;61;2
 WireConnection;66;1;62;2
 WireConnection;84;0;61;0
@@ -303,27 +312,32 @@ WireConnection;101;53;65;0
 WireConnection;116;0;101;56
 WireConnection;116;1;115;0
 WireConnection;118;0;116;0
+WireConnection;119;0;118;0
+WireConnection;117;0;122;236
+WireConnection;117;1;119;0
+WireConnection;105;0;117;0
 WireConnection;95;0;65;0
 WireConnection;95;4;62;0
 WireConnection;95;1;107;0
 WireConnection;95;2;108;0
 WireConnection;95;3;109;0
-WireConnection;119;0;118;0
+WireConnection;96;1;95;0
+WireConnection;125;0;123;0
+WireConnection;125;1;126;0
+WireConnection;125;2;105;0
 WireConnection;71;0;101;56
 WireConnection;71;1;72;0
-WireConnection;96;1;95;0
-WireConnection;117;0;122;236
-WireConnection;117;1;119;0
-WireConnection;105;0;117;0
 WireConnection;73;0;101;0
 WireConnection;73;1;71;0
 WireConnection;73;2;122;226
 WireConnection;73;3;96;0
+WireConnection;124;0;122;226
+WireConnection;124;1;125;0
 WireConnection;60;0;73;0
-WireConnection;60;1;122;226
+WireConnection;60;1;124;0
 WireConnection;60;2;105;0
-WireConnection;120;1;122;226
+WireConnection;120;1;124;0
 WireConnection;120;0;60;0
 WireConnection;0;2;120;0
 ASEEND*/
-//CHKSM=0378D7C4C97698E0D47BC0747E050638B870E865
+//CHKSM=B9020A7C5000FF81946A466CEA42679B1830B855
