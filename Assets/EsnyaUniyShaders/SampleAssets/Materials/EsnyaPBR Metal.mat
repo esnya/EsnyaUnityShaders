@@ -136,7 +136,7 @@ Material:
     - _RefractionStrength: 1
     - _RoughnessCorrection: 1
     - _RoughnessSmoothnessCorrection: 1
-    - _RougnessCorrection: 0.45
+    - _RougnessCorrection: 2.2
     - _SPECGLOSSMAP: 1
     - _SmoothnessCorrection: 1
     - _SmoothnessTextureChannel: 0

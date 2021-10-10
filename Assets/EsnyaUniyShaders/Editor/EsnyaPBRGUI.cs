@@ -165,6 +165,16 @@ namespace EsnyaFactory {
             SetKeyword(materialEditor, "_PACKEDMASK_METALLICGLOSSMAP", glossinessMode == GlossinessMode.Smoothness && packed, GetProperty(dict, "_PACKEDMASK_METALLICGLOSSMAP"));
         }
 
+        private static void ShaderKeywordToggle(MaterialEditor materialEditor, IDictionary<string, MaterialProperty> dict, string propertyName, string label)
+        {
+            using var scope = new EditorGUI.ChangeCheckScope();
+            var prop = ShaderPropertyField(materialEditor, dict, propertyName, label);
+            if (scope.changed)
+            {
+                SetKeyword(materialEditor, propertyName, prop.floatValue != 0);
+            }
+        }
+
         public override void OnGUI(MaterialEditor materialEditor, MaterialProperty[] props)
         {
             var material = materialEditor.target as Material;
@@ -230,6 +240,8 @@ namespace EsnyaFactory {
                     ShaderPropertyField(materialEditor, dict, "_SmoothnessCorrection", "Gamma Correction");
                     break;
             }
+
+            ShaderKeywordToggle(materialEditor, dict, "_GeometricSpecularAA", "Geometric Specular AA");
 
             Header("Normal");
             ShaderPropertyField(materialEditor, dict, "_NORMALMAP", "Enabled");
@@ -312,7 +324,9 @@ namespace EsnyaFactory {
             Header("Other Options");
             ShaderPropertyField(materialEditor, dict, "_ZWrite", "Z Write");
             ShaderPropertyField(materialEditor, dict, "_CullMode", "Cull Mode");
+
             materialEditor.LightmapEmissionProperty();
+            materialEditor.EnableInstancingField();
             materialEditor.RenderQueueField();
         }
     }
