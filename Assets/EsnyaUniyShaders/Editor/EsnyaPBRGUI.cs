@@ -167,11 +167,13 @@ namespace EsnyaFactory {
 
         private static void ShaderKeywordToggle(MaterialEditor materialEditor, IDictionary<string, MaterialProperty> dict, string propertyName, string label)
         {
-            using var scope = new EditorGUI.ChangeCheckScope();
-            var prop = ShaderPropertyField(materialEditor, dict, propertyName, label);
-            if (scope.changed)
+            using (var scope = new EditorGUI.ChangeCheckScope())
             {
-                SetKeyword(materialEditor, propertyName, prop.floatValue != 0);
+                var prop = ShaderPropertyField(materialEditor, dict, propertyName, label);
+                if (scope.changed)
+                {
+                    SetKeyword(materialEditor, propertyName, prop.floatValue != 0);
+                }
             }
         }
 
