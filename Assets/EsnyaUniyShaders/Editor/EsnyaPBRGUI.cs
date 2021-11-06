@@ -151,6 +151,13 @@ namespace EsnyaFactory {
             return property;
         }
 
+        private static MaterialProperty ScaleOffsetField(MaterialEditor materialEditor, IDictionary<string, MaterialProperty> dict, string name)
+        {
+            var property = GetProperty(dict, name);
+            if (property != null) materialEditor.TextureScaleOffsetProperty(property);
+            return property;
+        }
+
         private static void Header(string label, bool space = true)
         {
             if (space) EditorGUILayout.Space();
@@ -194,6 +201,7 @@ namespace EsnyaFactory {
 
             Header("Albedo");
             ShaderPropertyField(materialEditor, dict, "_MainTex", "Albedo");
+            ScaleOffsetField(materialEditor, dict, "_MainTex");
             ShaderPropertyField(materialEditor, dict, "_Color", "Color");
 
             if (dict["_Mode"].floatValue == (int)RenderType.TransparentCutout)
@@ -295,6 +303,7 @@ namespace EsnyaFactory {
             {
                 ShaderPropertyField(materialEditor, dict, "_DetailMask", "Detail Mask");
                 ShaderPropertyField(materialEditor, dict, "_DetailAlbedoMap", "Detail Albedo");
+                ScaleOffsetField(materialEditor, dict, "_DetailAlbedoMap");
                 ShaderPropertyField(materialEditor, dict, "_DetailNormalMap", "Normal Map");
                 ShaderPropertyField(materialEditor, dict, "_DetailNormalMapScale", "Normal Map Scale");
                 ShaderPropertyField(materialEditor, dict, "_UVSetforsecondarytextures", "UV Set for secondary textures");
