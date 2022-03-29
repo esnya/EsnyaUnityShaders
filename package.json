@@ -1,7 +1,7 @@
 {
   "name": "com.nekometer.esnya-unity-shaders",
   "displayName": "EsnyaUnityShaders",
-  "version": "1.0.0",
+  "version": "2.6.1",
   "private": true,
   "description": "Shader collection for Unity built-in shading. Tested with Unity 2018.4.20f1.",
   "keywords": [
