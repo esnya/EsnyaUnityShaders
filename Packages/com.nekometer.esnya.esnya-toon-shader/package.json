@@ -1,9 +1,9 @@
 {
-  "name": "com.nekometer.esnya.esnya-unity-shaders",
-  "displayName": "Esnya Unity Shaders",
+  "name": "com.nekometer.esnya.esnya-pbr-shader",
+  "displayName": "Esnya PBR Shader",
   "version": "1.0.0",
   "private": true,
-  "description": "Shader collection for Unity built-in pipeline.",
+  "description": "Advanced PBR Shader powered by Amplify Shader Editor",
   "keywords": [
     "Unity",
     "ShaderLab",

@@ -1,6 +1,6 @@
 // Made with Amplify Shader Editor
 // Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "EsnyaPBR/Advanced"
+Shader "EsnyaPBR/EsnyaPBR Advanced"
 {
 	Properties
 	{
@@ -8,8 +8,8 @@ Shader "EsnyaPBR/Advanced"
 		_Mode("Rendering Mode", Int) = 0
 		[Toggle(_ALPHATEST_ON)] _AlphaTest("Alpha Test", Float) = 0
 		[Toggle(_ALPHABLEND_ON)] _AlphaBlend("Alpha Blend", Float) = 0
-		_Color("Color", Color) = (1,1,1,1)
 		[NoScaleOffset][SingleLineTexture]_MetallicGlossMapS("Metallic Map", 2D) = "white" {}
+		_Color("Color", Color) = (1,1,1,1)
 		[SingleLineTexture]_MainTex("Albedo", 2D) = "white" {}
 		_Metallic("Metallic", Range( 0 , 1)) = 1
 		[NoScaleOffset][SingleLineTexture]_SpecGlossMap("Roughness Map", 2D) = "white" {}
@@ -33,10 +33,10 @@ Shader "EsnyaPBR/Advanced"
 		_Parallax("Height Map Scale", Range( 0.005 , 0.08)) = 0.005
 		[Header(Use Detail Map)][Toggle(_DETAIL_MULX2)] _DETAIL_MULX2("Use Detail Maps", Float) = 0
 		[NoScaleOffset][SingleLineTexture]_DetailMask("Detail Mask", 2D) = "white" {}
-		[SingleLineTexture]_DetailAlbedoMap("Detail Albedo", 2D) = "white" {}
+		[SingleLineTexture]_DetailAlbedoMap("Detail Albedo", 2D) = "gray" {}
 		[NoScaleOffset][Normal][SingleLineTexture]_DetailNormalMap("Detail Normal Map", 2D) = "bump" {}
 		_DetailNormalMapScale("Detail Normal Map Scale", Float) = 1
-		[Enum(UV1,0,UV2,1)]_UVSetforsecondarytextures("UV Set for secondary textures", Int) = 0
+		[Enum(UV1,0,UV2,1,UV3,2)]_UVSetforsecondarytextures("UV Set for secondary textures", Int) = 0
 		[NoScaleOffset][SingleLineTexture]_TransmissionMap("Transmission Map", 2D) = "white" {}
 		_TransmissionColor("Transmission Color", Color) = (0,0,0,0)
 		[NoScaleOffset][SingleLineTexture]_TranslucencyMap("Translucency Map", 2D) = "white" {}
@@ -62,8 +62,9 @@ Shader "EsnyaPBR/Advanced"
 		[Toggle]_ZWrite("Z Write", Float) = 1
 		[Enum(BlendMode)]__src("SrcBlend", Int) = 1
 		[Enum(BlendMode)]__dst("DstBlend", Int) = 0
-		[HideInInspector] _texcoord2( "", 2D ) = "white" {}
+		[HideInInspector] _texcoord3( "", 2D ) = "white" {}
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
+		[HideInInspector] _texcoord2( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
@@ -101,6 +102,7 @@ Shader "EsnyaPBR/Advanced"
 			float2 uv_texcoord;
 			float3 worldPos;
 			float2 uv2_texcoord2;
+			float2 uv3_texcoord3;
 			float3 worldNormal;
 			INTERNAL_DATA
 			float4 screenPos;
@@ -123,33 +125,33 @@ Shader "EsnyaPBR/Advanced"
 		uniform int __dst;
 		uniform int _CullMode;
 		uniform float _ZWrite;
-		uniform float4 _EmissionColor;
-		uniform float _Glossiness;
-		uniform int _Mode;
 		uniform float _Metallic;
-		uniform float _SmoothnessCorrection;
-		uniform sampler2D _SpecGlossMap;
-		uniform float _BumpScale;
-		uniform sampler2D _ParallaxMapS;
-		uniform sampler2D _ParallaxMapS1;
-		uniform float _RougnessCorrection;
-		uniform sampler2D _OcclusionMap;
-		uniform sampler2D _MetallicGlossMapS;
 		uniform float _SmoothnessTextureChannel;
-		uniform sampler2D _BumpMap;
-		uniform int _UVSetforsecondarytextures;
 		uniform float _DetailNormalMapScale;
-		uniform sampler2D _MainTex;
+		uniform sampler2D _BumpMap;
 		uniform float _Parallax;
 		uniform float4 _Color;
 		uniform sampler2D _EmissionMap;
+		uniform int _UVSetforsecondarytextures;
+		uniform float _RougnessCorrection;
+		uniform float _SmoothnessCorrection;
+		uniform sampler2D _MainTex;
+		uniform int _Mode;
+		uniform sampler2D _ParallaxMapS;
+		uniform float4 _EmissionColor;
+		uniform sampler2D _ParallaxMapS1;
+		uniform float _Glossiness;
+		uniform sampler2D _MetallicGlossMapS;
+		uniform sampler2D _OcclusionMap;
+		uniform float _BumpScale;
+		uniform sampler2D _SpecGlossMap;
 		uniform float4 _MainTex_ST;
 		uniform sampler2D _ParallaxMap;
 		uniform sampler2D _MetallicGlossMap;
 		uniform sampler2D _DetailNormalMap;
-		uniform sampler2D _DetailMask;
 		uniform sampler2D _DetailAlbedoMap;
 		uniform float4 _DetailAlbedoMap_ST;
+		uniform sampler2D _DetailMask;
 		uniform float _OcclusionStrength;
 		uniform sampler2D _TransmissionMap;
 		uniform float4 _TransmissionColor;
@@ -290,8 +292,11 @@ Shader "EsnyaPBR/Advanced"
 			#else
 				float3 staticSwitch143_g5 = float3(0,0,1);
 			#endif
-			float2 uv2_MainTex = i.uv2_texcoord2 * _MainTex_ST.xy + _MainTex_ST.zw;
-			float2 lerpResult162_g5 = lerp( uv_MainTex , uv2_MainTex , (float)_UVSetforsecondarytextures);
+			float2 uv_DetailAlbedoMap = i.uv_texcoord * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
+			float2 uv2_DetailAlbedoMap = i.uv2_texcoord2 * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
+			float2 uv3_DetailAlbedoMap = i.uv3_texcoord3 * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
+			float2 lerpResult243_g5 = lerp( uv2_DetailAlbedoMap , uv3_DetailAlbedoMap , (float)saturate( ( _UVSetforsecondarytextures - 1 ) ));
+			float2 lerpResult162_g5 = lerp( uv_DetailAlbedoMap , lerpResult243_g5 , (float)saturate( _UVSetforsecondarytextures ));
 			float2 uv_DetailMask152_g5 = i.uv_texcoord;
 			float3 lerpResult156_g5 = lerp( BlendNormals( UnpackScaleNormal( tex2D( _DetailNormalMap, lerpResult162_g5 ), _DetailNormalMapScale ) , staticSwitch143_g5 ) , staticSwitch143_g5 , tex2D( _DetailMask, uv_DetailMask152_g5 ).r);
 			#ifdef _DETAIL_MULX2
@@ -308,12 +313,11 @@ Shader "EsnyaPBR/Advanced"
 			float4 tex2DNode5_g5 = tex2D( _MainTex, staticSwitch127_g5 );
 			float4 temp_output_8_0_g5 = ( _Color * tex2DNode5_g5 );
 			float3 temp_output_78_0_g5 = (temp_output_8_0_g5).rgb;
-			float2 uv_DetailAlbedoMap = i.uv_texcoord * _DetailAlbedoMap_ST.xy + _DetailAlbedoMap_ST.zw;
-			float temp_output_9_0_g7 = tex2D( _DetailMask, uv_DetailMask152_g5 ).r;
-			float temp_output_18_0_g7 = ( 1.0 - temp_output_9_0_g7 );
-			float3 appendResult16_g7 = (float3(temp_output_18_0_g7 , temp_output_18_0_g7 , temp_output_18_0_g7));
+			float temp_output_9_0_g6 = tex2D( _DetailMask, uv_DetailMask152_g5 ).r;
+			float temp_output_18_0_g6 = ( 1.0 - temp_output_9_0_g6 );
+			float3 appendResult16_g6 = (float3(temp_output_18_0_g6 , temp_output_18_0_g6 , temp_output_18_0_g6));
 			#ifdef _DETAIL_MULX2
-				float3 staticSwitch131_g5 = ( temp_output_78_0_g5 * ( ( ( (tex2D( _DetailAlbedoMap, uv_DetailAlbedoMap )).rgb * (unity_ColorSpaceDouble).rgb ) * temp_output_9_0_g7 ) + appendResult16_g7 ) );
+				float3 staticSwitch131_g5 = ( temp_output_78_0_g5 * ( ( ( (tex2D( _DetailAlbedoMap, lerpResult162_g5 )).rgb * (unity_ColorSpaceDouble).rgb ) * temp_output_9_0_g6 ) + appendResult16_g6 ) );
 			#else
 				float3 staticSwitch131_g5 = temp_output_78_0_g5;
 			#endif
@@ -347,13 +351,13 @@ Shader "EsnyaPBR/Advanced"
 			#else
 				float staticSwitch228_g5 = staticSwitch227_g5;
 			#endif
-			float3 newWorldNormal3_g6 = (WorldNormalVector( i , staticSwitch224_g5 ));
-			float3 temp_output_6_0_g6 = ddx( newWorldNormal3_g6 );
-			float dotResult7_g6 = dot( temp_output_6_0_g6 , temp_output_6_0_g6 );
-			float3 temp_output_10_0_g6 = ddy( newWorldNormal3_g6 );
-			float dotResult12_g6 = dot( temp_output_10_0_g6 , temp_output_10_0_g6 );
+			float3 newWorldNormal3_g7 = (WorldNormalVector( i , staticSwitch224_g5 ));
+			float3 temp_output_6_0_g7 = ddx( newWorldNormal3_g7 );
+			float dotResult7_g7 = dot( temp_output_6_0_g7 , temp_output_6_0_g7 );
+			float3 temp_output_10_0_g7 = ddy( newWorldNormal3_g7 );
+			float dotResult12_g7 = dot( temp_output_10_0_g7 , temp_output_10_0_g7 );
 			#ifdef _GeometricSpecularAA
-				float staticSwitch187_g5 = min( staticSwitch228_g5 , ( 1.0 - pow( saturate( max( dotResult7_g6 , dotResult12_g6 ) ) , 0.333 ) ) );
+				float staticSwitch187_g5 = min( staticSwitch228_g5 , ( 1.0 - pow( saturate( max( dotResult7_g7 , dotResult12_g7 ) ) , 0.333 ) ) );
 			#else
 				float staticSwitch187_g5 = staticSwitch228_g5;
 			#endif
@@ -415,10 +419,11 @@ Shader "EsnyaPBR/Advanced"
 			{
 				V2F_SHADOW_CASTER;
 				float4 customPack1 : TEXCOORD1;
-				float4 screenPos : TEXCOORD2;
-				float4 tSpace0 : TEXCOORD3;
-				float4 tSpace1 : TEXCOORD4;
-				float4 tSpace2 : TEXCOORD5;
+				float2 customPack2 : TEXCOORD2;
+				float4 screenPos : TEXCOORD3;
+				float4 tSpace0 : TEXCOORD4;
+				float4 tSpace1 : TEXCOORD5;
+				float4 tSpace2 : TEXCOORD6;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
 				UNITY_VERTEX_OUTPUT_STEREO
 			};
@@ -443,6 +448,8 @@ Shader "EsnyaPBR/Advanced"
 				o.customPack1.xy = v.texcoord;
 				o.customPack1.zw = customInputData.uv2_texcoord2;
 				o.customPack1.zw = v.texcoord1;
+				o.customPack2.xy = customInputData.uv3_texcoord3;
+				o.customPack2.xy = v.texcoord2;
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET( o )
 				o.screenPos = ComputeScreenPos( o.pos );
 				return o;
@@ -458,6 +465,7 @@ Shader "EsnyaPBR/Advanced"
 				UNITY_INITIALIZE_OUTPUT( Input, surfIN );
 				surfIN.uv_texcoord = IN.customPack1.xy;
 				surfIN.uv2_texcoord2 = IN.customPack1.zw;
+				surfIN.uv3_texcoord3 = IN.customPack2.xy;
 				float3 worldPos = float3( IN.tSpace0.w, IN.tSpace1.w, IN.tSpace2.w );
 				half3 worldViewDir = normalize( UnityWorldSpaceViewDir( worldPos ) );
 				surfIN.worldPos = worldPos;
@@ -483,14 +491,14 @@ Shader "EsnyaPBR/Advanced"
 	CustomEditor "EsnyaFactory.EsnyaPBRGUI"
 }
 /*ASEBEGIN
-Version=18912
-0;1248;2353;832;2166.599;466.4022;1;True;True
+Version=18935
+0;1097;1715;982;1847.599;541.4022;1;True;False
 Node;AmplifyShaderEditor.IntNode;141;-1024,-127;Inherit;False;Property;__src;SrcBlend;60;1;[Enum];Create;False;0;0;1;BlendMode;True;0;False;1;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.IntNode;143;-1024,-32;Inherit;False;Property;__dst;DstBlend;61;1;[Enum];Create;False;0;0;1;BlendMode;True;0;False;0;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.IntNode;4;-1024,-384;Inherit;False;Property;_CullMode;Cull Mode;58;1;[Enum];Create;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.RangedFloatNode;157;-1024,-256;Inherit;False;Property;_ZWrite;Z Write;59;1;[Toggle];Create;True;0;0;0;True;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.FunctionNode;168;-640,-256;Inherit;False;EsnyaPBR;1;;5;d7448cd6078718a4b92322da44cf5771;2,179,0,175,1;1;180;FLOAT2;0,0;False;12;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT;212;FLOAT3;115
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;-384,-256;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;EsnyaPBR/Advanced;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;True;157;0;False;-1;False;0;False;-1;0;False;-1;False;0;Custom;0.5;True;True;0;True;Custom;;Geometry;ForwardOnly;16;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;1;5;True;141;10;True;143;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;Relative;0;;0;49;56;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;-384,-256;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;EsnyaPBR/EsnyaPBR Advanced;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;True;157;0;False;-1;False;0;False;-1;0;False;-1;False;0;Custom;0.5;True;True;0;True;Custom;;Geometry;ForwardOnly;18;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;1;5;True;141;10;True;143;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;0;49;56;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;0;0;168;0
 WireConnection;0;1;168;34
 WireConnection;0;2;168;42
@@ -504,4 +512,4 @@ WireConnection;0;9;168;14
 WireConnection;0;10;168;212
 WireConnection;0;11;168;115
 ASEEND*/
-//CHKSM=D2E65D9D3CE3EAF6F911AC99C6FE7D8450D1E260
+//CHKSM=0FC191026520FDCA3DAC7339833BCB3C82F02B51

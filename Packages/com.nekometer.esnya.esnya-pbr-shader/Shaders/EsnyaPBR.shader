@@ -1,6 +1,6 @@
 // Made with Amplify Shader Editor
 // Available at the Unity Asset Store - http://u3d.as/y3X 
-Shader "EsnyaPBR/Standard"
+Shader "EsnyaPBR/EsnyaPBR Standard"
 {
 	Properties
 	{
@@ -352,14 +352,14 @@ Shader "EsnyaPBR/Standard"
 	CustomEditor "EsnyaFactory.EsnyaPBRGUI"
 }
 /*ASEBEGIN
-Version=18921
-0;979;1223;1100;1388.664;633.8958;1;True;False
+Version=18935
+0;1097;1715;982;1634.664;574.8958;1;True;False
 Node;AmplifyShaderEditor.IntNode;141;-1024,-127;Inherit;False;Property;__src;SrcBlend;51;1;[Enum];Create;False;0;0;1;BlendMode;True;0;False;1;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.IntNode;143;-1024,-32;Inherit;False;Property;__dst;DstBlend;52;1;[Enum];Create;False;0;0;1;BlendMode;True;0;False;0;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.RangedFloatNode;157;-1024,-256;Inherit;False;Property;_ZWrite;Z Write;50;1;[Toggle];Create;True;0;0;0;True;0;False;1;0;0;0;0;1;FLOAT;0
 Node;AmplifyShaderEditor.IntNode;4;-1024,-384;Inherit;False;Property;_CullMode;Cull Mode;49;1;[Enum];Create;False;1;Shader Options;0;1;CullMode;True;0;False;2;0;False;0;1;INT;0
 Node;AmplifyShaderEditor.FunctionNode;189;-640,-256;Inherit;False;EsnyaPBR;1;;1;d7448cd6078718a4b92322da44cf5771;2,179,0,175,1;1;180;FLOAT2;0,0;False;12;FLOAT3;0;FLOAT3;34;FLOAT3;42;FLOAT;30;FLOAT;17;FLOAT;44;FLOAT3;89;FLOAT3;96;FLOAT;84;FLOAT;14;FLOAT;212;FLOAT3;115
-Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;-253,-246;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;EsnyaPBR/Standard;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;True;157;0;False;-1;False;0;False;-1;0;False;-1;False;0;Custom;0.5;True;True;0;True;Custom;;Geometry;ForwardOnly;18;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;1;5;True;141;10;True;143;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;0;-1;-1;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
+Node;AmplifyShaderEditor.StandardSurfaceOutputNode;0;-253,-246;Float;False;True;-1;2;EsnyaFactory.EsnyaPBRGUI;0;0;Standard;EsnyaPBR/EsnyaPBR Standard;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;False;Back;0;True;157;0;False;-1;False;0;False;-1;0;False;-1;False;0;Custom;0.5;True;True;0;True;Custom;;Geometry;ForwardOnly;18;all;True;True;True;True;0;False;-1;False;0;False;-1;255;False;-1;255;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;-1;False;2;15;10;25;False;0.5;True;1;5;True;141;10;True;143;0;0;False;-1;0;False;-1;0;False;-1;0;False;-1;0;False;0;0,0,0,0;VertexOffset;True;False;Cylindrical;False;True;Relative;0;;0;-1;-1;-1;0;False;0;0;True;4;-1;0;False;-1;0;0;0;False;0.1;False;-1;0;False;-1;False;16;0;FLOAT3;0,0,0;False;1;FLOAT3;0,0,0;False;2;FLOAT3;0,0,0;False;3;FLOAT;0;False;4;FLOAT;0;False;5;FLOAT;0;False;6;FLOAT3;0,0,0;False;7;FLOAT3;0,0,0;False;8;FLOAT;0;False;9;FLOAT;0;False;10;FLOAT;0;False;13;FLOAT3;0,0,0;False;11;FLOAT3;0,0,0;False;12;FLOAT3;0,0,0;False;14;FLOAT4;0,0,0,0;False;15;FLOAT3;0,0,0;False;0
 WireConnection;0;0;189;0
 WireConnection;0;1;189;34
 WireConnection;0;2;189;42
@@ -370,4 +370,4 @@ WireConnection;0;9;189;14
 WireConnection;0;10;189;212
 WireConnection;0;11;189;115
 ASEEND*/
-//CHKSM=4902788D9B713A9B57FDD6D62EE9C18BFF4C990D
+//CHKSM=919EDD827E9458984859A3B46AEB610206F2A945

@@ -1,9 +1,9 @@
 {
-  "name": "com.nekometer.esnya.esnya-unity-shaders",
-  "displayName": "Esnya Unity Shaders",
+  "name": "com.nekometer.esnya.esnya-toon-shader",
+  "displayName": "Esnya Toon Shader",
   "version": "1.0.0",
   "private": true,
-  "description": "Shader collection for Unity built-in pipeline.",
+  "description": "Minimum simplified toon shader",
   "keywords": [
     "Unity",
     "ShaderLab",
