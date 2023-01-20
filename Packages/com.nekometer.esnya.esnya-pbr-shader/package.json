@@ -1,9 +1,9 @@
 {
-  "name": "com.nekometer.esnya.esnya-toon-shader",
+  "name": "com.nekometer.esnya.esnya-pbr-shader",
   "displayName": "Esnya Toon Shader",
   "version": "1.0.0",
   "private": true,
-  "description": "Minimum simplified toon shader",
+  "description": "Customizable PBR shader like Standard",
   "keywords": [
     "Unity",
     "ShaderLab",
