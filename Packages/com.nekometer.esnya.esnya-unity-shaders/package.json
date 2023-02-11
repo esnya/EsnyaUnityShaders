@@ -1,0 +1,25 @@
+{
+  "name": "com.nekometer.esnya.esnya-unity-shaders",
+  "displayName": "Esnya Unity Shaders",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shader collection for Unity built-in pipeline.",
+  "keywords": [
+    "Unity",
+    "ShaderLab",
+    "Shader"
+  ],
+  "homepage": "https://github.com/esnya/EsnyaUnityShaders#readme",
+  "bugs": {
+    "url": "https://github.com/esnya/EsnyaUnityShaders/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/esnya/EsnyaUnityShaders.git"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "esnya"
+  },
+  "unity": "2019.4"
+}
