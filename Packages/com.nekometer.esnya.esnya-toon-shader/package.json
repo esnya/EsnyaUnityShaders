@@ -1,9 +1,9 @@
 {
   "name": "com.nekometer.esnya.esnya-toon-shader",
-  "displayName": "Esnya PBR Shader",
+  "displayName": "Esnya Toon Shader",
   "version": "1.0.0",
   "private": true,
-  "description": "Advanced PBR Shader powered by Amplify Shader Editor",
+  "description": "Advanced toon shader powered by Amplify Shader Editor",
   "keywords": [
     "Unity",
     "ShaderLab",
