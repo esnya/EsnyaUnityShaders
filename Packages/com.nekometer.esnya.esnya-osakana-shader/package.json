@@ -3,7 +3,7 @@
   "displayName": "Osakana Shader",
   "version": "1.0.0",
   "private": true,
-  "description": "Shader collection for Unity built-in shading. Tested with Unity 2018.4.20f1.",
+  "description": "Shader collection for Unity built-in shading. Tested with Unity 2022.3.22f1.",
   "keywords": [
     "Unity",
     "ShaderLab",
@@ -20,5 +20,6 @@
   "license": "MIT",
   "author": {
     "name": "esnya"
-  }
+  },
+  "unity": "2022.3"
 }

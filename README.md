@@ -1,5 +1,5 @@
 # Esnya Unity Shaders
-Shader collection for Unity built-in shading. Tested with Unity 2018.4.20f1.
+Shader collection for Unity built-in shading. Tested with Unity 2022.3.22f1.
 
 ([Japanese](#Japanese))
 

@@ -1,9 +1,9 @@
 {
-  "name": "com.nekometer.esnya.esnya-pbr-shader",
-  "displayName": "Esnya PBR Shader",
+  "name": "com.nekometer.esnya.esnya-toon-shader",
+  "displayName": "Esnya Toon Shader",
   "version": "1.0.0",
   "private": true,
-  "description": "Advanced PBR Shader powered by Amplify Shader Editor",
+  "description": "Advanced toon shader powered by Amplify Shader Editor",
   "keywords": [
     "Unity",
     "ShaderLab",
@@ -21,5 +21,5 @@
   "author": {
     "name": "esnya"
   },
-  "unity": "2019.4"
+  "unity": "2022.3"
 }
