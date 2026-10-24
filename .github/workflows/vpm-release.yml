@@ -7,11 +7,21 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: lts/*
+          node-version: '24.22.1'
           registry-url: https://npm.pkg.github.com
           scope: com.nekometer.esnya
-      - run: npm install
-      - run: npx semantic-release
+      - run: node --version
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Verify installed dependency graph
+        run: |
+          npm ls --all --offline --ignore-scripts --no-audit --no-fund --json > "$RUNNER_TEMP/dependency-tree.json"
+          node -e 'const fs = require("node:fs"); const tree = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/dependency-tree.json", "utf8")); if (tree.problems?.length) throw new Error("Dependency graph has problems"); console.log("Dependency graph verified");'
+      - name: Verify native dependency consumers without side effects
+        run: node .github/scripts/dependency-smoke.mjs .
+      - name: Verify four generated workspace archive fixtures
+        run: node .github/scripts/archive-compat-smoke.mjs .
+      - if: ${{ !startsWith(github.ref, 'refs/heads/codex/') }}
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.GITHUB_TOKEN }}
