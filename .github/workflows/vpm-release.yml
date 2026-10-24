@@ -18,6 +18,8 @@ jobs:
           node -e 'const fs = require("node:fs"); const tree = JSON.parse(fs.readFileSync(process.env.RUNNER_TEMP + "/dependency-tree.json", "utf8")); if (tree.problems?.length) throw new Error("Dependency graph has problems"); console.log("Dependency graph verified");'
       - name: Verify native dependency consumers without side effects
         run: node .github/scripts/dependency-smoke.mjs .
+      - name: Verify four generated workspace archive fixtures
+        run: node .github/scripts/archive-compat-smoke.mjs .
       - if: ${{ !startsWith(github.ref, 'refs/heads/codex/') }}
         run: npx semantic-release
         env:
