@@ -31,11 +31,11 @@ async function createUnityPackage(workspace: string)
     await fs.promises.copyFile(`${workspace}.meta`, `${rootDir}.meta`);
 
     const metaFiles = glob.sync(`${tmp}/**/*.meta`.replace(/\\/g, "/"));
-    await archive(
-      metaFiles.map((p) => path.relative(tmp, p)),
-      tmp,
-      unitypackageName
-    );
+    await archive({
+      files: metaFiles.map((p) => path.resolve(p.slice(0, -5))),
+      root: tmp,
+      dest: unitypackageName,
+    });
   } finally {
     await new Promise<void>((resolve, reject) =>
       rimraf(tmp, (e) => (e ? reject(e) : resolve()))
@@ -50,7 +50,7 @@ async function createUnityPackage(workspace: string)
     (await fs.promises.readFile("package.json")).toString()
   );
 
-  const workspaces: string[] | undefined = pkg.workspaces?.map((w: string) => glob.sync(w))?.flat();
+  const workspaces: string[] | undefined = pkg.workspaces?.map((w: string) => glob.sync(w))?.flat()?.filter((w: string) => fs.statSync(w).isDirectory());
   if (workspaces) await workspaces.reduce((p, workspace) => p.then(() => createUnityPackage(workspace)), Promise.resolve());
   else await createUnityPackage(process.cwd());
 })().catch(console.error);
